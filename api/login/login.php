@@ -59,7 +59,7 @@ class Login_api extends Admin
     }
 }
 
-// To check if an user is already logged in
+// To check if admin already logged in
 if (isset($_SESSION['admin_id'])) {
     send(400, 'error', $_SESSION['admin_name'] . ' already logged in');
     die();
