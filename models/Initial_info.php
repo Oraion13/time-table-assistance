@@ -3,7 +3,7 @@
 // Operations for '
 // timetable_timetables
 // ' is handeled here
-class Info
+class Initial_info
 {
     private $conn;
 

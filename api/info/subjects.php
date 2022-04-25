@@ -112,11 +112,11 @@ class Subjects_api extends Info
 // GET all the info
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $Subjects_api = new Subjects_api();
-    if (isset($_GET['dept']) && isset($_GET['sem'])) {
+    if (isset($_GET['dept']) && isset($_GET['sem']) && $_GET['dept'] != 0 && $_GET['sem'] != 0) {
         $Subjects_api->get_dept_sem();
-    } else if(isset($_GET['sem'])) {
+    } else if(isset($_GET['sem']) && $_GET['sem'] != 0) {
         $Subjects_api->get_sem();
-    }else if(isset($_GET['dept'])) {
+    }else if(isset($_GET['dept']) && $_GET['dept'] != 0) {
         $Subjects_api->get_dept();
     }else{
         $Subjects_api->get();

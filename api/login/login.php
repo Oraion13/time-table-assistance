@@ -21,7 +21,7 @@ class Login_api extends Admin
         $dbconnection = new DbConnection();
         $db = $dbconnection->connect();
 
-        // Create an object for this->Admin table to do operations
+        // Create an object for Admin table to do operations
         $this->Admin = new Admin($db);
     }
 
