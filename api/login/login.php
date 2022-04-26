@@ -54,7 +54,7 @@ class Login_api extends Admin
                 send(400, 'error', 'Incorrect password');
             }
         } else {
-            send(400, 'error', 'incorrect admin_name');
+            send(400, 'error', 'incorrect admin name');
         }
     }
 }
