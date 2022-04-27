@@ -15,7 +15,7 @@ function login(e){
     // console.log(Login);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "../api/login/login.php", true);
+    xhr.open("POST", "../../../api/login/login.php", true);
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {

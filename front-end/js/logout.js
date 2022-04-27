@@ -5,7 +5,7 @@ logout_form.addEventListener("click", logout);
 function logout(){
     const xhr = new XMLHttpRequest();
 
-    xhr.open("GET", "../api/login/logout.php", true);
+    xhr.open("GET", "../../../api/login/logout.php", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
             const got = JSON.parse(xhr.responseText);
