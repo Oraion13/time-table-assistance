@@ -51,7 +51,7 @@ class Subjects_api extends Info
     public function get_dept()
     {
         // Get the user info from DB
-        $this->Subjects->dept_id = $_GET['dept'];
+        $this->Subjects->department_id = $_GET['dept'];
         $all_data = $this->Subjects->read_by_dept();
 
         if ($all_data) {
@@ -91,7 +91,7 @@ class Subjects_api extends Info
     public function get_dept_sem()
     {
         // Get the user info from DB
-        $this->Subjects->dept_id = $_GET['dept'];
+        $this->Subjects->department_id = $_GET['dept'];
         $this->Subjects->semester = $_GET['sem'];
         $all_data = $this->Subjects->read_by_dept_sem();
 

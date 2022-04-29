@@ -51,7 +51,7 @@ class Faculties_api extends Info
     public function get_dept()
     {
         // Get the user info from DB
-        $this->Faculties->dept_id = $_GET['dept'];
+        $this->Faculties->department_id = $_GET['dept'];
         $all_data = $this->Faculties->read_by_dept();
 
         if ($all_data) {

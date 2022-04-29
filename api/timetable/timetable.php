@@ -7,8 +7,9 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
 require_once '../../config/DbConnection.php';
-require_once '../../utils/send.php';
 require_once '../../models/Timetables.php';
+require_once '../../utils/send.php';
+require_once '../../utils/loggedin.php';
 
 class Timetable_api extends Timetables
 {
@@ -181,10 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 // To check if admin is logged in
-if (!isset($_SESSION['admin_id'])) {
-    send(400, 'error', 'admin not logged in');
-    die();
-}
+loggedin();
 
 // If a admin logged in ...
 

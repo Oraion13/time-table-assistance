@@ -1,7 +1,7 @@
 <?php
 
 // Operations for 'timetable_subject_allocations' is handeled here
-class Positions_prev
+class Subject_allocation
 {
     private $conn;
     private $table = 'timetable_subject_allocations';
@@ -24,9 +24,8 @@ class Positions_prev
     public function read()
     {
         $columns = $this->table . '.subject_allocation_id, ' . $this->table . '.timetable_id, '
-            . $this->table . '.subject_id, ' . $this->subjects . '.position, ' . $this->table . '.faculty_id, '
-            . $this->faculties . '.department, ' . $this->table . '.position_prev_where, '
-            . $this->table . '.position_prev_from, ' . $this->table . '.position_prev_to';
+            . $this->table . '.subject_id, ' . $this->subjects . '.subject, ' . $this->table . '.faculty_id, '
+            . $this->faculties . '.faculty';
         $query = 'SELECT ' . $columns . ' FROM ((' . $this->table . ' INNER JOIN ' . $this->subjects . ' ON '
             . $this->table . '.subject_id = ' . $this->subjects . '.subject_id) INNER JOIN '
             . $this->faculties . ' ON ' . $this->table . '.faculty_id = '
@@ -41,13 +40,12 @@ class Positions_prev
         return false;
     }
 
-    // Read all data (previous subjects) of a user by ID
+    // Read all data of a time table by ID
     public function read_row()
     {
         $columns = $this->table . '.subject_allocation_id, ' . $this->table . '.timetable_id, '
-            . $this->table . '.subject_id, ' . $this->subjects . '.position, ' . $this->table . '.faculty_id, '
-            . $this->faculties . '.department, ' . $this->table . '.position_prev_where, '
-            . $this->table . '.position_prev_from, ' . $this->table . '.position_prev_to';
+            . $this->table . '.subject_id, ' . $this->subjects . '.subject, ' . $this->table . '.faculty_id, '
+            . $this->faculties . '.faculty';
         $query = 'SELECT ' . $columns . ' FROM ((' . $this->table . ' INNER JOIN ' . $this->subjects . ' ON '
             . $this->table . '.timetable_id = :timetable_id AND ' . $this->table . '.subject_id = '
             . $this->subjects . '.subject_id) INNER JOIN ' . $this->faculties . ' ON '
@@ -67,13 +65,12 @@ class Positions_prev
         return false;
     }
 
-    // Insert a user's previous position
+    // Insert a new subject - faculty
     public function post()
     {
         $query = 'INSERT INTO ' . $this->table
             . ' SET timetable_id = :timetable_id, subject_id = :subject_id, 
-                faculty_id = :faculty_id, position_prev_where = :position_prev_where, 
-                position_prev_from = :position_prev_from, position_prev_to = :position_prev_to';
+                faculty_id = :faculty_id';
 
         $stmt = $this->conn->prepare($query);
 
@@ -81,16 +78,10 @@ class Positions_prev
         $this->timetable_id = htmlspecialchars(strip_tags($this->timetable_id));
         $this->subject_id = htmlspecialchars(strip_tags($this->subject_id));
         $this->faculty_id = htmlspecialchars(strip_tags($this->faculty_id));
-        $this->position_prev_where = htmlspecialchars(strip_tags($this->position_prev_where));
-        $this->position_prev_from = htmlspecialchars(strip_tags($this->position_prev_from));
-        $this->position_prev_to = htmlspecialchars(strip_tags($this->position_prev_to));
 
         $stmt->bindParam(':timetable_id', $this->timetable_id);
         $stmt->bindParam(':subject_id', $this->subject_id);
         $stmt->bindParam(':faculty_id', $this->faculty_id);
-        $stmt->bindParam(':position_prev_where', $this->position_prev_where);
-        $stmt->bindParam(':position_prev_from', $this->position_prev_from);
-        $stmt->bindParam(':position_prev_to', $this->position_prev_to);
 
         // If data inserted successfully, return True
         if ($stmt->execute()) {
