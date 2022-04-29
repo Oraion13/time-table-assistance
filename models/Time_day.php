@@ -35,7 +35,8 @@ class Time_day
             . $this->table . '.subject_allocation_id = ' . $this->subject_allocations . '.subject_allocation_id) INNER JOIN '
             . $this->subjects . ' ON ' . $this->subject_allocations . '.subject_id = '
             . $this->subjects . '.subject_id) INNER JOIN ' . $this->faculties . ' ON ' . $this->subject_allocations
-            . '.faculty_id = ' . $this->faculties . '.faculty_id)';
+            . '.faculty_id = ' . $this->faculties . '.faculty_id ) ORDER BY '
+            . $this->table . '.day, ' . $this->table . '.time';
 
         $stmt = $this->conn->prepare($query);
 
@@ -58,7 +59,8 @@ class Time_day
             . $this->table . '.subject_allocation_id = ' . $this->subject_allocations . '.subject_allocation_id) INNER JOIN '
             . $this->subjects . ' ON ' . $this->subject_allocations . '.subject_id = '
             . $this->subjects . '.subject_id) INNER JOIN ' . $this->faculties . ' ON ' . $this->subject_allocations
-            . '.faculty_id = ' . $this->faculties . '.faculty_id)';
+            . '.faculty_id = ' . $this->faculties . '.faculty_id ) ORDER BY '
+            . $this->table . '.day, ' . $this->table . '.time';
 
         $stmt = $this->conn->prepare($query);
 
@@ -82,7 +84,7 @@ class Time_day
             . $this->subject_allocations . '.faculty_id, ' . $this->faculties . '.faculty';
         $query = 'SELECT ' . $columns . ' FROM ((' . $this->table . ' INNER JOIN ' . $this->subject_allocations . ' ON '
             . $this->table . '.day = :day AND '
-            . $this->table . '.time = :time )  INNER JOIN ' . $this->faculties . ' ON ' 
+            . $this->table . '.time = :time )  INNER JOIN ' . $this->faculties . ' ON '
             . $this->subject_allocations . '.faculty_id = :faculty_id)';
 
         $stmt = $this->conn->prepare($query);
