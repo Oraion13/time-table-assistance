@@ -53,3 +53,13 @@ const departments = [
         "dept_name": "Department of Mechanical Engineering"
     }
 ]
+
+// ----------------------------- Time table ------------------------------------ //
+
+// To update pass timetable id in URL (...?ID=3) in PUT method
+const timetable = {
+    "academic_year_from": "2004",
+    "academic_year_to": "2005",
+    "department_id": 2,
+    "semester": 3
+}
