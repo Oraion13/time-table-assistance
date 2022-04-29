@@ -21,7 +21,7 @@ class Login_api extends Admin
         $dbconnection = new DbConnection();
         $db = $dbconnection->connect();
 
-        // Create an object for this->Admin table to do operations
+        // Create an object for Admin table to do operations
         $this->Admin = new Admin($db);
     }
 
@@ -54,12 +54,12 @@ class Login_api extends Admin
                 send(400, 'error', 'Incorrect password');
             }
         } else {
-            send(400, 'error', 'incorrect admin_name');
+            send(400, 'error', 'incorrect admin name');
         }
     }
 }
 
-// To check if an user is already logged in
+// To check if admin already logged in
 if (isset($_SESSION['admin_id'])) {
     send(400, 'error', $_SESSION['admin_name'] . ' already logged in');
     die();
