@@ -27,7 +27,7 @@ class Timetables
     {
         $columns = $this->table . '.timetable_id, ' . $this->table . '.academic_year_from, '
                     . $this->table . '.academic_year_to, ' . $this->table . '.department_id, '
-                    . $this->departments . '.department_name, ' . $this->table . '.semester';
+                    . $this->departments . '.department, ' . $this->table . '.semester';
         $query = 'SELECT ' . $columns . ' FROM (' . $this->table . ' INNER JOIN ' . $this->departments
                     . ' ON ' . $this->table . '.department_id = ' . $this->departments . '.department_id)' ;
 
@@ -80,7 +80,7 @@ class Timetables
     {
         $columns = $this->table . '.timetable_id, ' . $this->table . '.academic_year_from, '
                     . $this->table . '.academic_year_to, ' . $this->table . '.department_id, '
-                    . $this->departments . '.department_name, ' . $this->table . '.semester';
+                    . $this->departments . '.department, ' . $this->table . '.semester';
         $query = 'SELECT ' . $columns . ' FROM (' . $this->table . ' INNER JOIN ' . $this->departments
                     . ' ON timetable_id = :timetable_id AND ' . $this->table . '.department_id = ' 
                     . $this->departments . '.department_id)' ;
