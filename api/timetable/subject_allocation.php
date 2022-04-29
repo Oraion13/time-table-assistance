@@ -11,7 +11,7 @@ require_once '../../models/Subject_allocations.php';
 require_once '../../utils/send.php';
 require_once '../../utils/loggedin.php';
 
-class Positions_prev_api extends Subject_allocation
+class Subject_allocation_api extends Subject_allocation
 {
     private $Subject_allocation;
 
@@ -22,7 +22,7 @@ class Positions_prev_api extends Subject_allocation
         $dbconnection = new DbConnection();
         $db = $dbconnection->connect();
 
-        // Create an object for users table to do operations
+        // Create an object for subject_allocations table to do operations
         $this->Subject_allocation = new Subject_allocation($db);
     }
 
@@ -174,11 +174,11 @@ class Positions_prev_api extends Subject_allocation
 
 // GET all the user's previous positions
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $Positions_prev_api = new Positions_prev_api();
+    $Subject_allocation_api = new Subject_allocation_api();
     if (isset($_GET['ID'])) {
-        $Positions_prev_api->get_by_id($_GET['ID']);
+        $Subject_allocation_api->get_by_id($_GET['ID']);
     } else {
-        $Positions_prev_api->get();
+        $Subject_allocation_api->get();
     }
 }
 
@@ -189,10 +189,10 @@ loggedin();
 
 // POST/UPDATE (PUT) a user's previous positions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'PUT') {
-    $Positions_prev_api = new Positions_prev_api();
+    $Subject_allocation_api = new Subject_allocation_api();
     if (isset($_SESSION['timetable_id'])) {
-        $Positions_prev_api->put($_SESSION['timetable_id']);
+        $Subject_allocation_api->put($_SESSION['timetable_id']);
     } else {
-        $Positions_prev_api->put($_GET['ID']);
+        $Subject_allocation_api->put($_GET['ID']);
     }
 }

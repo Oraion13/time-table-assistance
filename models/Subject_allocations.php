@@ -65,6 +65,34 @@ class Subject_allocation
         return false;
     }
 
+    // read only the row
+    public function read_only_row()
+    {
+        $columns = $this->table . '.faculty_id, ' . $this->faculties . '.faculty';
+        $query = 'SELECT ' . $columns . ' FROM (' . $this->table . ' INNER JOIN '
+            . $this->faculties . ' ON ' . $this->table . '.subject_allocation_id = :subject_allocation_id AND '
+            . $this->table . '.faculty_id =' . $this->faculties . '.faculty_id)';
+
+        $stmt = $this->conn->prepare($query);
+
+        // Clean the data
+        $this->subject_allocation_id = htmlspecialchars(strip_tags($this->subject_allocation_id));
+
+        $stmt->bindParam(':subject_allocation_id', $this->subject_allocation_id);
+
+        if ($stmt->execute()) {
+            // Fetch the data
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // If data exists, return the data
+            if ($row) {
+                return $row;
+            }
+        }
+
+        return false;
+    }
+
     // Insert a new subject - faculty
     public function post()
     {
