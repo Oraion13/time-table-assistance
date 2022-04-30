@@ -18,45 +18,41 @@
 
 </head>
 
-<body>
-    <nav class="navbar bg-white sticky-top navbar-light bg-gradient d-flex p-3 shadow-sm">
+<body style="background-color: 
+#a99bff;">
+
+    <nav class="navbar sticky-top navbar-light bg-gradient d-flex p-3 shadow-sm">
         <!-- <a href="#" class="btn btn-white"><i class="fa-solid fa-house"></i> Home</a> -->
         <h4>TimeTable Assistant</h4>
-        <button id="logout_form" class="btn btn-white"><i class="fa-solid fa-right-from-bracket"></i>
-            Logout</button>
+        <a href="../../../api/login/logout.php" class="btn btn-white"><i class="fa-solid fa-right-from-bracket"></i>
+            Logout</a>
     </nav>
-    <div class="container p-lg-5 my-5">
-
-        <div class="row align-items-center rounded-3 border shadow-lg ">
-            <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
-                <h1 class="display-4 fw-bold lh-1">Welcome </h1>
-                <p class="lead">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                    labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                    ut
-                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                    cillum dolore eu fugiat nulla pariatur.
-                </p>
+    <div class="container my-5 shadow-lg " style="background-color:#dadefb; width: auto;">
 
 
+        <div class="row gap-5">
+            <div class="col-3 d-flex flex-column ps-5 ">
+                <img class="rounded-lg-3" src="../../public/assets/tta.png" alt="tt" width="420" />
             </div>
-            <div class="col-lg d-flex flex-column gap-2 ">
+
+            <div class="col-8 d-flex flex-column gap-3 align-self-center align-items-center">
 
                 <!-- <div class="pb-2"> -->
-                <a href="./login.html" type="button" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold">
+                <h1 class="display-4 fw-bold lh-1 pb-4">Welcome !</h1>
+                <a href="./createtimetable.html" type="button" class="btn btn-primary btn-lg w-50">
                     <i class="fa-solid fa-pen-to-square"></i>
                     Edit TimeTable
                     <i class="fas fa-arrow-circle-right ps-4"></i>
                 </a>
                 <!-- </div>
                 <div class="pb-2"> -->
-                <a href="./login.html" type="button" class="btn btn-outline-secondary btn-lg px-4 me-md-2 fw-bold">
+                <a href="./createtimetable.html" type="button" class="btn btn-outline-secondary btn-lg w-50 ">
                     <!-- <i class="fa-solid fa-pen-to-square"></i> -->
                     <i class="fa-solid fa-circle-plus"></i>
                     <!-- <i class="fa-solid fa-calendar-circle-plus"></i> -->
                     Create New TimeTable
-                    <i class="fas fa-arrow-circle-right ps-4"></i> </a>
+                    <i class="fas fa-arrow-circle-right ps-4 "></i>
+                </a>
 
                 <!-- </div> -->
             </div>
@@ -70,5 +66,6 @@
 
 
 </body>
-<script src="../../js/logout.js"></script>
+<script src="/front-end/js/logout.js"></script>
+
 </html>

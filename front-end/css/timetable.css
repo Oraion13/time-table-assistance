@@ -1,0 +1,40 @@
+select {
+  border: 0;
+  width: 100%;
+}
+table {
+  width: 100%;
+}
+table,
+td,
+th {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.navbar {
+  font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
+}
+
+table td.shrink {
+  white-space: nowrap;
+}
+table td.expand {
+  width: 99%;
+}
+table {
+  box-shadow: 2px 3px 10px rgb(215, 215, 215);
+}
+.diagonalCross2 {
+  background: linear-gradient(
+    to top right,
+    #fff calc(50% - 1px),
+    black,
+    #fff calc(50% + 1px)
+  );
+}
+.btn {
+  text-transform: none;
+  font-size: medium;
+}
