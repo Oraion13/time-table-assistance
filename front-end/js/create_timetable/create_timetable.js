@@ -69,8 +69,6 @@ const create_dept = (id, value, department) => {
 function create_timetable(e) {
   e.preventDefault();
 
-  console.log("dept",department);
-
   const timetable = {
     academic_year_from: academic_year_from.value,
     academic_year_to: academic_year_to.value,

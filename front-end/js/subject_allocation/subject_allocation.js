@@ -9,8 +9,11 @@ const clear_all = document.getElementById("clear_all");
 const alert = document.querySelector(".alert");
 
 // edit option
+let edit_element;
 let edit_sub;
 let edit_fac;
+let edit_sub_index;
+let edit_fac_index;
 let edit_flag = false;
 let edit_id = "";
 
@@ -20,6 +23,8 @@ window.addEventListener("DOMContentLoaded", setup_subject_faculty);
 allocate.addEventListener("click", add_item);
 // clear all allocated subjects
 clear_all.addEventListener("click", clear_items);
+// form submitted
+subject_allocation_form.addEventListener("submit", subject_allocation);
 
 // get timetable from local storage
 const get_timetable = () => {
@@ -118,10 +123,12 @@ const append_faculty = (id, code, value) => {
 };
 
 // setup faculties and subjects
-function setup_subject_faculty() {
+async function setup_subject_faculty() {
   setup_subject();
   setup_faculty();
-  setup_items();
+  setTimeout(() => {
+    setup_items();
+  }, 2000);
 }
 
 // --------------------------------------------------------------------------------
@@ -175,8 +182,11 @@ function delete_item(e) {
 function edit_item(e) {
   const element = e.currentTarget.parentElement.parentElement;
   // set edit item
+  edit_element = e.currentTarget.previousElementSibling;
   edit_sub = element.dataset.sub;
   edit_fac = element.dataset.fac;
+  edit_sub_index = element.dataset.sub_index;
+  edit_fac_index = element.dataset.fac_index;
   // set form value
   subject.value = edit_sub;
   faculty.value = edit_fac;
@@ -198,9 +208,6 @@ function set_back_to_default() {
 // add item to the list
 function add_item(e) {
   e.preventDefault();
-
-  console.log("subject", subject.value);
-  console.log("faculty", faculty.value);
 
   if (!isNaN(subject.value) && !isNaN(faculty.value) && !edit_flag) {
     const id = uuid();
@@ -224,9 +231,11 @@ function add_item(e) {
     element.classList.add("subject-faculty");
 
     element.innerHTML = `
-    <p class="sub-fac"><b>${
+    <p class="sub-fac"><span><b>${
       subject.options[subject.selectedIndex].text
-    }</b> allocated for <b>${faculty.options[faculty.selectedIndex].text}</b>
+    }</b> allocated for <b>${
+      faculty.options[faculty.selectedIndex].text
+    }</b></span>
     &ensp;
               <button type="button" class="edit-btn btn btn-warning">
                 <i class="fas fa-edit"></i>
@@ -258,6 +267,9 @@ function add_item(e) {
   } else if (!isNaN(subject.value) && !isNaN(faculty.value) && edit_flag) {
     subject.value = subject.value;
     faculty.value = faculty.value;
+    edit_element.innerHTML = `<b>${
+      subject.options[subject.selectedIndex].text
+    }</b> allocated for <b>${faculty.options[faculty.selectedIndex].text}</b>`;
     display_alert("values changed", "success");
 
     // edit  local storage
@@ -312,7 +324,8 @@ function edit_local_storage(id, sub, fac, sub_index, fac_index) {
     if (item.id === id) {
       item.sub = sub;
       item.fac = fac;
-      (item.sub_index = sub_index), (item.fac_index = fac_index);
+      item.sub_index = sub_index;
+      item.fac_index = fac_index;
     }
     return item;
   });
@@ -336,6 +349,8 @@ function setup_items() {
       );
     });
   }
+
+  set_back_to_default();
 }
 
 function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
@@ -358,11 +373,8 @@ function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
   element.setAttributeNode(fac_index);
   element.classList.add("subject-faculty");
 
-  console.log("val", sub_indexval);
   element.innerHTML = `
-    <p class="sub-fac"><b>${
-      subject.options[sub_indexval].text
-    }</b> allocated for <b>${faculty.options[fac_indexval].text}</b>
+    <p class="sub-fac"><span><b>${subject.options[sub_indexval].text}</b> allocated for <b>${faculty.options[fac_indexval].text}</b></span>
     &ensp;
               <button type="button" class="edit-btn btn btn-warning">
                 <i class="fas fa-edit"></i>
@@ -379,4 +391,46 @@ function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
 
   // append child
   allocated.appendChild(element);
+}
+
+// ------------------ submit form ------------------------- //
+
+function subject_allocation(e) {
+  e.preventDefault();
+
+  let subject_allocations = [];
+
+  const sub_fac = JSON.parse(window.localStorage.getItem("subjects_allocated"));
+  const timetable = JSON.parse(window.localStorage.getItem("timetable"));
+  sub_fac.forEach((elem) => {
+    subject_allocations.push({
+      subject_allocation_id: isNaN(elem.id) ? 0 : elem.id,
+      subject_id: elem.sub,
+      faculty_id: elem.fac,
+    });
+  });
+
+  const xhr = new XMLHttpRequest();
+
+  xhr.open("POST", `../../../api/timetable/subject_allocation.php?ID=${timetable.timetable_id}`, true);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      const got = JSON.parse(xhr.responseText);
+
+      if (got.error) {
+        display_alert(got.error, "danger");
+      } else {
+        if (got.length !== 0) {
+          window.localStorage.setItem(
+            "subject_allocation",
+            JSON.stringify(got)
+          );
+        }
+        window.location.replace("./timetable.html");
+      }
+    }
+  };
+
+  xhr.send(JSON.stringify(subject_allocations));
 }
