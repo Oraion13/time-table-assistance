@@ -10,6 +10,7 @@ const alert = document.querySelector(".alert");
 
 // edit option
 let edit_element;
+let edit_tag;
 let edit_sub;
 let edit_fac;
 let edit_sub_index;
@@ -127,7 +128,12 @@ async function setup_subject_faculty() {
   setup_subject();
   setup_faculty();
   setTimeout(() => {
-    setup_items();
+    const arr = JSON.parse(window.localStorage.getItem("subjects_allocated"));
+    if (arr && arr.length !== 0) {
+      setup_items();
+    } else {
+      db_data();
+    }
   }, 2000);
 }
 
@@ -182,6 +188,7 @@ function delete_item(e) {
 function edit_item(e) {
   const element = e.currentTarget.parentElement.parentElement;
   // set edit item
+  edit_tag = element;
   edit_element = e.currentTarget.previousElementSibling;
   edit_sub = element.dataset.sub;
   edit_fac = element.dataset.fac;
@@ -218,9 +225,9 @@ function add_item(e) {
     sub.value = subject.value;
     let fac = document.createAttribute("data-fac");
     fac.value = faculty.value;
-    let sub_index = document.createAttribute("data-sub-index");
+    let sub_index = document.createAttribute("data-sub_index");
     sub_index.value = subject.selectedIndex;
-    let fac_index = document.createAttribute("data-fac-index");
+    let fac_index = document.createAttribute("data-fac_index");
     fac_index.value = faculty.selectedIndex;
 
     element.setAttributeNode(attr);
@@ -265,8 +272,11 @@ function add_item(e) {
     // // set back to default
     set_back_to_default();
   } else if (!isNaN(subject.value) && !isNaN(faculty.value) && edit_flag) {
-    subject.value = subject.value;
-    faculty.value = faculty.value;
+    edit_tag.dataset.sub = subject.value;
+    edit_tag.dataset.fac = faculty.value;
+    edit_tag.dataset.sub_index = subject.selectedIndex;
+    edit_tag.dataset.fac_index = faculty.selectedIndex;
+
     edit_element.innerHTML = `<b>${
       subject.options[subject.selectedIndex].text
     }</b> allocated for <b>${faculty.options[faculty.selectedIndex].text}</b>`;
@@ -313,7 +323,7 @@ function remove_from_local_storage(id) {
     }
   });
 
-  localStorage.setItem("subjects_allocated", JSON.stringify(items));
+  window.localStorage.setItem("subjects_allocated", JSON.stringify(items));
 }
 
 // edit an element in local storage
@@ -321,7 +331,7 @@ function edit_local_storage(id, sub, fac, sub_index, fac_index) {
   let items = get_local_storage();
 
   items = items.map(function (item) {
-    if (item.id === id) {
+    if (item.id == id) {
       item.sub = sub;
       item.fac = fac;
       item.sub_index = sub_index;
@@ -329,7 +339,7 @@ function edit_local_storage(id, sub, fac, sub_index, fac_index) {
     }
     return item;
   });
-  localStorage.setItem("subjects_allocated", JSON.stringify(items));
+  window.localStorage.setItem("subjects_allocated", JSON.stringify(items));
   return;
 }
 
@@ -361,9 +371,9 @@ function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
   sub.value = subval;
   let fac = document.createAttribute("data-fac");
   fac.value = facval;
-  let sub_index = document.createAttribute("data-sub-index");
+  let sub_index = document.createAttribute("data-sub_index");
   sub_index.value = sub_indexval;
-  let fac_index = document.createAttribute("data-fac-index");
+  let fac_index = document.createAttribute("data-fac_index");
   fac_index.value = fac_indexval;
 
   element.setAttributeNode(attr);
@@ -412,7 +422,11 @@ function subject_allocation(e) {
 
   const xhr = new XMLHttpRequest();
 
-  xhr.open("POST", `../../../api/timetable/subject_allocation.php?ID=${timetable.timetable_id}`, true);
+  xhr.open(
+    "POST",
+    `../../../api/timetable/subject_allocation.php?ID=${timetable.timetable_id}`,
+    true
+  );
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState == XMLHttpRequest.DONE) {
@@ -426,6 +440,8 @@ function subject_allocation(e) {
             "subject_allocation",
             JSON.stringify(got)
           );
+
+          db_data();
         }
         window.location.replace("./timetable.html");
       }
@@ -434,3 +450,63 @@ function subject_allocation(e) {
 
   xhr.send(JSON.stringify(subject_allocations));
 }
+
+// ------------------------------------ Data from DB ----------------------------------------- //
+
+const db_data = () => {
+  const timetable = JSON.parse(window.localStorage.getItem("timetable"));
+
+  const xhr = new XMLHttpRequest();
+
+  xhr.open(
+    "GET",
+    `../../../api/timetable/subject_allocation.php?ID=${timetable.timetable_id}`,
+    true
+  );
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      const got = JSON.parse(xhr.responseText);
+
+      if (got.error) {
+        display_alert(got.error, "danger");
+      } else {
+        let items = [];
+        if (got.length !== 0) {
+          got.forEach((elem) => {
+            let sub_index = 0;
+            let fac_index = 0;
+
+            for (i in subject.options) {
+              if (subject.options[i].value == elem.subject_id) {
+                sub_index = i;
+              }
+            }
+
+            for (i in faculty.options) {
+              if (faculty.options[i].value == elem.faculty_id) {
+                fac_index = i;
+              }
+            }
+
+            items.push({
+              id: elem.subject_allocation_id,
+              sub: elem.subject_id,
+              fac: elem.faculty_id,
+              sub_index: Number(sub_index),
+              fac_index: Number(fac_index),
+            });
+          });
+          window.localStorage.setItem(
+            "subjects_allocated",
+            JSON.stringify(items)
+          );
+
+          setup_items();
+        }
+      }
+    }
+  };
+
+  xhr.send();
+};
