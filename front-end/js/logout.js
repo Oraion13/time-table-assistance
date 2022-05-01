@@ -10,9 +10,9 @@ function logout() {
     if (xhr.readyState == XMLHttpRequest.DONE) {
       const got = JSON.parse(xhr.responseText);
       if (got.error) {
-        alert(got.error);
+        window.alert(got.error);
       } else {
-        alert("admin logged out");
+        window.alert("admin logged out");
         window.location.replace("./login.html");
       }
     }

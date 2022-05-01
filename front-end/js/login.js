@@ -22,7 +22,7 @@ function login(e){
             const got = JSON.parse(xhr.responseText);
             
             if(got.error){
-                alert(got.error);
+                window.alert(got.error);
             }else{
                 console.log(got);
                 window.location.replace("./homepage.html");

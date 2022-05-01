@@ -21,7 +21,7 @@ function setup_departments() {
       const got = JSON.parse(xhr.responseText);
 
       if (got.error) {
-        alert(got.error);
+        window.alert(got.error);
       } else {
         fill_departments(got);
       }
@@ -85,7 +85,7 @@ function create_timetable(e) {
       const got = JSON.parse(xhr.responseText);
 
       if (got.error) {
-        alert(got.error);
+        window.alert(got.error);
       } else {
         window.localStorage.setItem('timetable', JSON.stringify(got));
         window.location.replace("./subjectallocation.html");
