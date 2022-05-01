@@ -3,10 +3,23 @@ const subject_allocation_form = document.getElementById(
 );
 const subject = document.getElementById("subject");
 const faculty = document.getElementById("faculty");
-const add_another = document.ge
+const allocate = document.getElementById("allocate");
+const allocated = document.getElementById("allocated");
+const clear_all = document.getElementById("clear_all");
+const alert = document.querySelector(".alert");
+
+// edit option
+let edit_sub;
+let edit_fac;
+let edit_flag = false;
+let edit_id = "";
 
 // setup subject list and faculty list
 window.addEventListener("DOMContentLoaded", setup_subject_faculty);
+// add another subject
+allocate.addEventListener("click", add_item);
+// clear all allocated subjects
+clear_all.addEventListener("click", clear_items);
 
 // get timetable from local storage
 const get_timetable = () => {
@@ -36,7 +49,11 @@ const setup_subject = (subjects) => {
         alert(got.error);
       } else {
         got.forEach((element) => {
-          append_subject(element.subject_id, element.subject_code, element.subject);
+          append_subject(
+            element.subject_id,
+            element.subject_code,
+            element.subject
+          );
         });
       }
     }
@@ -48,7 +65,7 @@ const setup_subject = (subjects) => {
 // append a child element in the document list
 const append_subject = (id, code, value) => {
   const element = document.createElement("option");
-  let attr = document.createAttribute("id");
+  let attr = document.createAttribute("value");
   attr.value = id;
   element.setAttributeNode(attr);
   element.innerHTML = `${code} - ${value}`;
@@ -76,7 +93,11 @@ const setup_faculty = (faculties) => {
         alert(got.error);
       } else {
         got.forEach((element) => {
-          append_faculty(element.faculty_id, element.faculty_code, element.faculty);
+          append_faculty(
+            element.faculty_id,
+            element.faculty_code,
+            element.faculty
+          );
         });
       }
     }
@@ -88,7 +109,7 @@ const setup_faculty = (faculties) => {
 // append a child element in the document list
 const append_faculty = (id, code, value) => {
   const element = document.createElement("option");
-  let attr = document.createAttribute("id");
+  let attr = document.createAttribute("value");
   attr.value = id;
   element.setAttributeNode(attr);
   element.innerHTML = `${code} - ${value}`;
@@ -100,4 +121,262 @@ const append_faculty = (id, code, value) => {
 function setup_subject_faculty() {
   setup_subject();
   setup_faculty();
+  setup_items();
+}
+
+// --------------------------------------------------------------------------------
+// Generate unique ID
+function uuid() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+// !!!Alert!!!
+function display_alert(text, action) {
+  alert.textContent = text;
+  alert.classList.add(`alert-${action}`);
+  // remove alert
+  setTimeout(function () {
+    alert.textContent = "";
+    alert.classList.remove(`alert-${action}`);
+  }, 4000);
+}
+
+// clear items
+function clear_items() {
+  window.localStorage.removeItem("subjects_allocated");
+  const items = document.querySelectorAll(".subject-faculty");
+  if (items.length > 0) {
+    items.forEach(function (item) {
+      list.removeChild(item);
+    });
+  }
+  display_alert("removed all allocations", "danger");
+  set_back_to_default();
+}
+
+// delete an item
+function delete_item(e) {
+  const element = e.currentTarget.parentElement.parentElement;
+  const id = element.dataset.id;
+
+  allocated.removeChild(element);
+  display_alert("item removed", "danger");
+
+  set_back_to_default();
+  // remove from local storage
+  remove_from_local_storage(id);
+}
+
+// edit an item
+function edit_item(e) {
+  const element = e.currentTarget.parentElement.parentElement;
+  // set edit item
+  edit_sub = element.dataset.sub;
+  edit_fac = element.dataset.fac;
+  // set form value
+  subject.value = edit_sub;
+  faculty.value = edit_fac;
+  edit_flag = true;
+  edit_id = element.dataset.id;
+  //
+  allocate.textContent = "Edit";
+}
+
+// set backt to defaults
+function set_back_to_default() {
+  subject.value = "default";
+  faculty.value = "default";
+  edit_flag = false;
+  edit_id = "";
+  allocate.textContent = "Allocate";
+}
+
+// add item to the list
+function add_item(e) {
+  e.preventDefault();
+
+  console.log("subject", subject.value);
+  console.log("faculty", faculty.value);
+
+  if (!isNaN(subject.value) && !isNaN(faculty.value) && !edit_flag) {
+    const id = uuid();
+    const element = document.createElement("article");
+    let attr = document.createAttribute("data-id");
+    attr.value = id;
+    let sub = document.createAttribute("data-sub");
+    sub.value = subject.value;
+    let fac = document.createAttribute("data-fac");
+    fac.value = faculty.value;
+    let sub_index = document.createAttribute("data-sub-index");
+    sub_index.value = subject.selectedIndex;
+    let fac_index = document.createAttribute("data-fac-index");
+    fac_index.value = faculty.selectedIndex;
+
+    element.setAttributeNode(attr);
+    element.setAttributeNode(sub);
+    element.setAttributeNode(fac);
+    element.setAttributeNode(sub_index);
+    element.setAttributeNode(fac_index);
+    element.classList.add("subject-faculty");
+
+    element.innerHTML = `
+    <p class="sub-fac"><b>${
+      subject.options[subject.selectedIndex].text
+    }</b> allocated for <b>${faculty.options[faculty.selectedIndex].text}</b>
+    &ensp;
+              <button type="button" class="edit-btn btn btn-warning">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" class="delete-btn btn btn-danger">
+                <i class="fas fa-trash"></i>
+              </button></p>
+          `;
+    // add event listeners to both buttons;
+    const deleteBtn = element.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", delete_item);
+    const editBtn = element.querySelector(".edit-btn");
+    editBtn.addEventListener("click", edit_item);
+
+    // append child
+    allocated.appendChild(element);
+    // display alert
+    display_alert("subject allocated", "success");
+    // set local storage
+    add_to_local_storage(
+      id,
+      subject.value,
+      faculty.value,
+      subject.selectedIndex,
+      faculty.selectedIndex
+    );
+    // // set back to default
+    set_back_to_default();
+  } else if (!isNaN(subject.value) && !isNaN(faculty.value) && edit_flag) {
+    subject.value = subject.value;
+    faculty.value = faculty.value;
+    display_alert("values changed", "success");
+
+    // edit  local storage
+    edit_local_storage(
+      edit_id,
+      subject.value,
+      faculty.value,
+      subject.selectedIndex,
+      faculty.selectedIndex
+    );
+    set_back_to_default();
+  } else {
+    display_alert("please select both subject and faculty", "danger");
+  }
+}
+
+// ****** local storage **********
+
+// add to local storage
+function add_to_local_storage(id, sub, fac, sub_index, fac_index) {
+  const grocery = { id, sub, fac, sub_index, fac_index };
+  let items = get_local_storage();
+  items.push(grocery);
+  window.localStorage.setItem("subjects_allocated", JSON.stringify(items));
+}
+
+// get the allocated subjects
+function get_local_storage() {
+  return window.localStorage.getItem("subjects_allocated")
+    ? JSON.parse(window.localStorage.getItem("subjects_allocated"))
+    : [];
+}
+
+// remove from local storage
+function remove_from_local_storage(id) {
+  let items = get_local_storage();
+
+  items = items.filter(function (item) {
+    if (item.id !== id) {
+      return item;
+    }
+  });
+
+  localStorage.setItem("subjects_allocated", JSON.stringify(items));
+}
+
+// edit an element in local storage
+function edit_local_storage(id, sub, fac, sub_index, fac_index) {
+  let items = get_local_storage();
+
+  items = items.map(function (item) {
+    if (item.id === id) {
+      item.sub = sub;
+      item.fac = fac;
+      (item.sub_index = sub_index), (item.fac_index = fac_index);
+    }
+    return item;
+  });
+  localStorage.setItem("subjects_allocated", JSON.stringify(items));
+  return;
+}
+
+// ****** setup items **********
+
+function setup_items() {
+  let items = get_local_storage();
+
+  if (items.length > 0) {
+    items.forEach(function (item) {
+      create_list_item(
+        item.id,
+        item.sub,
+        item.fac,
+        item.sub_index,
+        item.fac_index
+      );
+    });
+  }
+}
+
+function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
+  const element = document.createElement("article");
+  let attr = document.createAttribute("data-id");
+  attr.value = id;
+  let sub = document.createAttribute("data-sub");
+  sub.value = subval;
+  let fac = document.createAttribute("data-fac");
+  fac.value = facval;
+  let sub_index = document.createAttribute("data-sub-index");
+  sub_index.value = sub_indexval;
+  let fac_index = document.createAttribute("data-fac-index");
+  fac_index.value = fac_indexval;
+
+  element.setAttributeNode(attr);
+  element.setAttributeNode(sub);
+  element.setAttributeNode(fac);
+  element.setAttributeNode(sub_index);
+  element.setAttributeNode(fac_index);
+  element.classList.add("subject-faculty");
+
+  console.log("val", sub_indexval);
+  element.innerHTML = `
+    <p class="sub-fac"><b>${
+      subject.options[sub_indexval].text
+    }</b> allocated for <b>${faculty.options[fac_indexval].text}</b>
+    &ensp;
+              <button type="button" class="edit-btn btn btn-warning">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" class="delete-btn btn btn-danger">
+                <i class="fas fa-trash"></i>
+              </button></p>
+          `;
+  // add event listeners to both buttons;
+  const deleteBtn = element.querySelector(".delete-btn");
+  deleteBtn.addEventListener("click", delete_item);
+  const editBtn = element.querySelector(".edit-btn");
+  editBtn.addEventListener("click", edit_item);
+
+  // append child
+  allocated.appendChild(element);
 }
