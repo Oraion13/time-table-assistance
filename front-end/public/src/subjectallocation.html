@@ -11,7 +11,7 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <script
+    <!-- <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
@@ -23,7 +23,7 @@
           $('.frm:last').after(frm);
         });
       });
-    </script>
+    </script> -->
   </head>
 
   <body>
@@ -32,59 +32,54 @@
     >
       <!-- <a href="#" class="btn btn-white"><i class="fa-solid fa-house"></i> Home</a> -->
       <h4>TimeTable Assistant</h4>
-      <a href="../../lib/logout.php" class="btn btn-white"
+      <a href="#" class="btn btn-white" id="logout_form"
         ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
       >
     </nav>
-    <div class="container p-lg-5 col-8 my-5 shadow-lg">
-      <div class="frm">
-        <div class="row mt-4">
-          <label for="inputPassword3" class="col-sm-2 col-form-label"
-            >Subject</label
-          >
-          <div class="col-sm-10">
-            <select id="inputState" class="form-select">
-              <option selected>Choose Subject Code...</option>
-              <option>...</option>
-            </select>
-            <input
+    <form id="subject_allocation_form">
+      <div class="container p-lg-5 col-8 my-5 shadow-lg">
+        <div class="frm">
+          <div class="row mt-4">
+            <label for="subject" class="col-sm-2 col-form-label">Subject</label>
+            <div class="col-sm-10">
+              <select id="subject" class="form-select">
+                <option selected>Choose Subject...</option>
+                <!-- <option>...</option> -->
+              </select>
+              <!-- <input
               type="text"
               placeholder="Subject Name"
               class="form-control mt-3"
               id="inputEmail3"
               disabled
-            />
+            /> -->
+            </div>
           </div>
-        </div>
 
-        <div class="row mb-3 mt-4">
-          <label for="inputPassword3" class="col-sm-2 col-form-label"
-            >Faculty</label
-          >
-          <div class="col-sm-10">
-            <select id="chooseFaculty" name="ChooseFaculty" class="form-select">
-              <option selected>Choose Faculty Code...</option>
-              <option>...</option>
-            </select>
-            <input
+          <div class="row mb-3 mt-4">
+            <label for="faculty" class="col-sm-2 col-form-label">Faculty</label>
+            <div class="col-sm-10">
+              <select id="faculty" name="ChooseFaculty" class="form-select">
+                <option selected>Choose Faculty...</option>
+                <!-- <option>...</option> -->
+              </select>
+              <!-- <input
               type="text"
               placeholder="Faculty Name"
               class="form-control mt-3"
               id="inputEmail3"
               disabled
-            />
+            /> -->
+            </div>
+          </div>
+          <div class="d-grid gap-2 d-md-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Allocate</button>
           </div>
         </div>
-
-        <form>
-          <div class="d-grid gap-2 d-md-flex justify-content-end">
-            <a href="./timetable.html" type="submit" class="btn btn-primary"
-              >Allocate</a
-            >
-          </div>
-        </form>
+        <button id="add_another">Add Another</button>
       </div>
-      <button class="repeat">Add Another</button>
-    </div>
+    </form>
   </body>
+  <script src="../../js/subject_allocation/subject_allocation.js"></script>
+  <script src="../../js/logout.js"></script>
 </html>
