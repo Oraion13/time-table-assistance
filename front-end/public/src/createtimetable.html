@@ -30,6 +30,7 @@
     </nav>
     <div class="container p-lg-5 my-5 shadow-lg">
       <form id="create_timetable_form">
+        <div class="alert text-center" role="alert"></div>
         <div class="row mb-3">
           <label for="academic_year_from" class="col-sm-2 col-form-label"
             >Academic Year From:
@@ -61,7 +62,7 @@
           </label>
           <div class="col-sm-8">
             <select id="semester" class="form-select">
-              <option selected>Choose...</option>
+              <option value="default" selected>Choose Semester...</option>
               <option value="1">01</option>
               <option value="2">02</option>
               <option value="3">03</option>
@@ -76,11 +77,19 @@
         <fieldset class="row mb-3">
           <legend class="col-form-label col-sm-2 pt-0">Department:</legend>
 
-          <div class="col-sm-10" id="departments"></div>
+          <div class="col-sm-8">
+            <select
+              id="departments"
+              name="ChooseDepartment"
+              class="form-select"
+            >
+              <option value="default" selected>Choose Department...</option>
+              <!-- <option>...</option> -->
+            </select>
+          </div>
         </fieldset>
 
-        <input type="submit" class="btn btn-primary"
-          />
+        <input type="submit" class="btn btn-primary" />
       </form>
     </div>
   </body>

@@ -128,12 +128,7 @@ async function setup_subject_faculty() {
   setup_subject();
   setup_faculty();
   setTimeout(() => {
-    const arr = JSON.parse(window.localStorage.getItem("subjects_allocated"));
-    if (arr && arr.length !== 0) {
-      setup_items();
-    } else {
-      db_data();
-    }
+    db_data();
   }, 2000);
 }
 
@@ -161,11 +156,11 @@ function display_alert(text, action) {
 
 // clear items
 function clear_items() {
-  window.localStorage.removeItem("subjects_allocated");
+  window.localStorage.removeItem("subject_allocation");
   const items = document.querySelectorAll(".subject-faculty");
   if (items.length > 0) {
     items.forEach(function (item) {
-      list.removeChild(item);
+      allocated.removeChild(item);
     });
   }
   display_alert("removed all allocations", "danger");
@@ -297,20 +292,20 @@ function add_item(e) {
   }
 }
 
-// --------------------------------- Local Storage ------------------------------------------ //
+// ------------------------------------------ Local Storage ------------------------------------------ //
 
 // add to local storage
 function add_to_local_storage(id, sub, fac, sub_index, fac_index) {
   const grocery = { id, sub, fac, sub_index, fac_index };
   let items = get_local_storage();
   items.push(grocery);
-  window.localStorage.setItem("subjects_allocated", JSON.stringify(items));
+  window.localStorage.setItem("subject_allocation", JSON.stringify(items));
 }
 
 // get the allocated subjects
 function get_local_storage() {
-  return window.localStorage.getItem("subjects_allocated")
-    ? JSON.parse(window.localStorage.getItem("subjects_allocated"))
+  return window.localStorage.getItem("subject_allocation")
+    ? JSON.parse(window.localStorage.getItem("subject_allocation"))
     : [];
 }
 
@@ -324,7 +319,7 @@ function remove_from_local_storage(id) {
     }
   });
 
-  window.localStorage.setItem("subjects_allocated", JSON.stringify(items));
+  window.localStorage.setItem("subject_allocation", JSON.stringify(items));
 }
 
 // edit an element in local storage
@@ -340,11 +335,11 @@ function edit_local_storage(id, sub, fac, sub_index, fac_index) {
     }
     return item;
   });
-  window.localStorage.setItem("subjects_allocated", JSON.stringify(items));
+  window.localStorage.setItem("subject_allocation", JSON.stringify(items));
   return;
 }
 
-// ------------------------------------ Setup Items after refresh ----------------------------- //
+// --------------------------------------- Setup Items after refresh ------------------------------------ //
 
 // get from local storage
 function setup_items() {
@@ -406,15 +401,21 @@ function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
   allocated.appendChild(element);
 }
 
-// ------------------------------------ submit form --------------------------------------- //
+// -------------------------------------------- submit form -------------------------------------------- //
 
 function subject_allocation(e) {
   e.preventDefault();
 
   let subject_allocations = [];
 
-  const sub_fac = JSON.parse(window.localStorage.getItem("subjects_allocated"));
+  const sub_fac = JSON.parse(window.localStorage.getItem("subject_allocation"));
   const timetable = JSON.parse(window.localStorage.getItem("timetable"));
+
+  if (sub_fac.length <= 0) {
+    display_alert("please allocate subjects", "danger");
+    return;
+  }
+
   sub_fac.forEach((elem) => {
     subject_allocations.push({
       subject_allocation_id: isNaN(elem.id) ? 0 : elem.id,
@@ -439,11 +440,6 @@ function subject_allocation(e) {
         display_alert(got.error, "danger");
       } else {
         if (got.length !== 0) {
-          window.localStorage.setItem(
-            "subject_allocation",
-            JSON.stringify(got)
-          );
-
           db_data();
         }
         window.location.replace("./timetable.html");
@@ -454,7 +450,7 @@ function subject_allocation(e) {
   xhr.send(JSON.stringify(subject_allocations));
 }
 
-// ------------------------------------ Data from DB ----------------------------------------- //
+// ------------------------------------------- Data from DB ---------------------------------------------- //
 
 const db_data = () => {
   const timetable = JSON.parse(window.localStorage.getItem("timetable"));
@@ -501,15 +497,14 @@ const db_data = () => {
             });
           });
           window.localStorage.setItem(
-            "subjects_allocated",
+            "subject_allocation",
             JSON.stringify(items)
           );
-
-          setup_items();
         }
       }
     }
   };
 
+  setup_items();
   xhr.send();
 };
