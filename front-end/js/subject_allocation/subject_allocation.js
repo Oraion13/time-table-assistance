@@ -137,7 +137,8 @@ async function setup_subject_faculty() {
   }, 2000);
 }
 
-// --------------------------------------------------------------------------------
+// ------------------------------------------  Create, Delete, Update  --------------------------------- //
+
 // Generate unique ID
 function uuid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -296,7 +297,7 @@ function add_item(e) {
   }
 }
 
-// ****** local storage **********
+// --------------------------------- Local Storage ------------------------------------------ //
 
 // add to local storage
 function add_to_local_storage(id, sub, fac, sub_index, fac_index) {
@@ -318,7 +319,7 @@ function remove_from_local_storage(id) {
   let items = get_local_storage();
 
   items = items.filter(function (item) {
-    if (item.id !== id) {
+    if (item.id != id) {
       return item;
     }
   });
@@ -343,8 +344,9 @@ function edit_local_storage(id, sub, fac, sub_index, fac_index) {
   return;
 }
 
-// ****** setup items **********
+// ------------------------------------ Setup Items after refresh ----------------------------- //
 
+// get from local storage
 function setup_items() {
   let items = get_local_storage();
 
@@ -363,6 +365,7 @@ function setup_items() {
   set_back_to_default();
 }
 
+// append te child element to html
 function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
   const element = document.createElement("article");
   let attr = document.createAttribute("data-id");
@@ -403,7 +406,7 @@ function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
   allocated.appendChild(element);
 }
 
-// ------------------ submit form ------------------------- //
+// ------------------------------------ submit form --------------------------------------- //
 
 function subject_allocation(e) {
   e.preventDefault();
