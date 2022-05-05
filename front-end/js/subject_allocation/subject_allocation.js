@@ -208,11 +208,26 @@ function set_back_to_default() {
   allocate.textContent = "Allocate";
 }
 
+// check for duplicates
+function check_for_duplicates(sub, fac) {
+  const items = get_local_storage();
+
+  // traverse and find a combo
+  return items && items.find((item) => sub == item.sub && fac == item.fac);
+}
+
 // add item to the list
 function add_item(e) {
   e.preventDefault();
 
+  // ------------------- create -------------------- //
   if (!isNaN(subject.value) && !isNaN(faculty.value) && !edit_flag) {
+    // check for duplicates
+    if (check_for_duplicates(subject.value, faculty.value)) {
+      display_alert("subject already allocated", "warning");
+      return;
+    }
+
     const id = uuid();
     const element = document.createElement("article");
     let attr = document.createAttribute("data-id");
@@ -267,7 +282,13 @@ function add_item(e) {
     );
     // // set back to default
     set_back_to_default();
+    // -------------- Edit ------------------- //
   } else if (!isNaN(subject.value) && !isNaN(faculty.value) && edit_flag) {
+    // check for duplicates
+    if (check_for_duplicates(subject.value, faculty.value)) {
+      display_alert("subject already allocated", "warning");
+    }
+
     edit_tag.dataset.sub = subject.value;
     edit_tag.dataset.fac = faculty.value;
     edit_tag.dataset.sub_index = subject.selectedIndex;
