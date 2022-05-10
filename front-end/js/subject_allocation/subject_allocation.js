@@ -2,6 +2,7 @@ const subject_allocation_form = document.getElementById(
   "subject_allocation_form"
 );
 const subject = document.getElementById("subject");
+const departments = document.getElementById("departments");
 const faculty = document.getElementById("faculty");
 const allocate = document.getElementById("allocate");
 const allocated = document.getElementById("allocated");
@@ -13,6 +14,7 @@ let edit_element;
 let edit_tag;
 let edit_sub;
 let edit_fac;
+let edit_dep;
 let edit_sub_index;
 let edit_fac_index;
 let edit_flag = false;
@@ -20,6 +22,9 @@ let edit_id = "";
 
 // setup subject list and faculty list
 window.addEventListener("DOMContentLoaded", setup_subject_faculty);
+//choose department
+department.addEventListener("change", select_departments);
+
 // add another subject
 allocate.addEventListener("click", add_item);
 // clear all allocated subjects
@@ -36,6 +41,7 @@ const get_timetable = () => {
 
 // setup subjects
 const setup_subject = (subjects) => {
+  console.log("ab");
   const timetable = get_timetable();
 
   const xhr = new XMLHttpRequest();
@@ -68,6 +74,44 @@ const setup_subject = (subjects) => {
   xhr.send();
 };
 
+// setup the department selection list
+const setup_departments = () => {
+  console.log("abcdefghijk");
+  const xhr = new XMLHttpRequest();
+
+  xhr.open("GET", "../../../api/info/departments.php", true);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      const got = JSON.parse(xhr.responseText);
+
+      if (got.error) {
+        window.alert(got.error);
+      } else {
+        fill_departments(got);
+      }
+    }
+  };
+  xhr.send();
+};
+
+// Fill the departments select tag
+const fill_departments = (got) => {
+  got.forEach((element) => {
+    create_dept(element.department_id, element.department);
+  });
+};
+
+// Options for departments select tag
+const create_dept = (id, department) => {
+  const element = document.createElement("option");
+  let attr = document.createAttribute("value");
+  attr.value = id;
+  element.setAttributeNode(attr);
+  element.innerHTML = `${department}`;
+
+  departments.appendChild(element);
+};
 // append a child element in the document list
 const append_subject = (id, code, value) => {
   const element = document.createElement("option");
@@ -122,11 +166,42 @@ const append_faculty = (id, code, value) => {
 
   faculty.appendChild(element);
 };
+function select_departments() {
+  const xhr = new XMLHttpRequest();
+  // get faculties
+  xhr.open(
+    "GET",
+    `../../../api/info/faculties.php?dept=${department.department_id}`,
+    true
+  );
 
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      const got = JSON.parse(xhr.responseText);
+
+      if (got.error) {
+        alert(got.error);
+      } else {
+        got.forEach((element) => {
+          append_faculty(
+            element.faculty_id,
+            element.faculty_code,
+            element.faculty
+          );
+        });
+      }
+    }
+  };
+
+  xhr.send();
+}
 // setup faculties and subjects
 async function setup_subject_faculty() {
+  console.log("aaaaaa");
   setup_subject();
+  setup_departments();
   setup_faculty();
+
   setTimeout(() => {
     db_data();
   }, 2000);
@@ -221,9 +296,14 @@ function add_item(e) {
   e.preventDefault();
 
   // ------------------- create -------------------- //
-  if (!isNaN(subject.value) && !isNaN(faculty.value) && !edit_flag) {
+  if (
+    !isNaN(subject.value) &&
+    !isNaN(faculty.value) &&
+    !isNaN(department.value) &&
+    !edit_flag
+  ) {
     // check for duplicates
-    if (check_for_duplicates(subject.value, faculty.value)) {
+    if (check_for_duplicates(subject.value, department.value, faculty.value)) {
       display_alert("subject already allocated", "warning");
       return;
     }
@@ -234,6 +314,8 @@ function add_item(e) {
     attr.value = id;
     let sub = document.createAttribute("data-sub");
     sub.value = subject.value;
+    let dep = document.createAttribute("data-dep");
+    fac.value = faculty.value;
     let fac = document.createAttribute("data-fac");
     fac.value = faculty.value;
     let sub_index = document.createAttribute("data-sub_index");
@@ -243,6 +325,7 @@ function add_item(e) {
 
     element.setAttributeNode(attr);
     element.setAttributeNode(sub);
+    element.setAttributeNode(dep);
     element.setAttributeNode(fac);
     element.setAttributeNode(sub_index);
     element.setAttributeNode(fac_index);
