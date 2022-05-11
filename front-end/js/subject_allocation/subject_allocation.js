@@ -256,22 +256,26 @@ function delete_item(e) {
 }
 
 // edit an item
-function edit_item(e) {
+async function edit_item(e) {
   const element = e.currentTarget.parentElement.parentElement;
   // set edit item
   edit_tag = element;
   edit_element = e.currentTarget.previousElementSibling;
   edit_sub = element.dataset.sub;
   edit_fac = element.dataset.fac;
-  edit_sub_index = element.dataset.sub_index;
-  edit_fac_index = element.dataset.fac_index;
-  // set form value
-  subject.value = edit_sub;
-  faculty.value = edit_fac;
-  edit_flag = true;
-  edit_id = element.dataset.id;
-  //
-  allocate.textContent = "Edit";
+  edit_dep = element.dataset.dep;
+  await select_faculty(edit_dep).then(() => {
+    edit_sub_index = element.dataset.sub_index;
+    edit_fac_index = element.dataset.fac_index;
+    // set form value
+    subject.value = edit_sub;
+    departments.value = edit_dep;
+    faculty.value = edit_fac;
+    edit_flag = true;
+    edit_id = element.dataset.id;
+    //
+    allocate.textContent = "Edit";
+  });
 }
 
 // set backt to defaults
@@ -312,6 +316,8 @@ function add_item(e) {
     sub.value = subject.value;
     let fac = document.createAttribute("data-fac");
     fac.value = faculty.value;
+    let dep = document.createAttribute("data-dep");
+    dep.value = departments.value;
     let sub_index = document.createAttribute("data-sub_index");
     sub_index.value = subject.selectedIndex;
     let fac_index = document.createAttribute("data-fac_index");
@@ -320,6 +326,7 @@ function add_item(e) {
     element.setAttributeNode(attr);
     element.setAttributeNode(sub);
     element.setAttributeNode(fac);
+    element.setAttributeNode(dep);
     element.setAttributeNode(sub_index);
     element.setAttributeNode(fac_index);
     element.classList.add("subject-faculty");
@@ -368,6 +375,7 @@ function add_item(e) {
 
     edit_tag.dataset.sub = subject.value;
     edit_tag.dataset.fac = faculty.value;
+    edit_tag.dataset.dep = departments.value;
     edit_tag.dataset.sub_index = subject.selectedIndex;
     edit_tag.dataset.fac_index = faculty.selectedIndex;
 
@@ -466,7 +474,7 @@ async function create_list_item(
   id,
   subval,
   facval,
-  dep,
+  depval,
   sub_indexval,
   fac_indexval
 ) {
@@ -477,6 +485,8 @@ async function create_list_item(
   sub.value = subval;
   let fac = document.createAttribute("data-fac");
   fac.value = facval;
+  let dep = document.createAttribute("data-dep");
+  dep.value = depval;
   let sub_index = document.createAttribute("data-sub_index");
   sub_index.value = sub_indexval;
   let fac_index = document.createAttribute("data-fac_index");
@@ -485,14 +495,15 @@ async function create_list_item(
   element.setAttributeNode(attr);
   element.setAttributeNode(sub);
   element.setAttributeNode(fac);
+  element.setAttributeNode(dep);
   element.setAttributeNode(sub_index);
   element.setAttributeNode(fac_index);
   element.classList.add("subject-faculty");
 
   // setup department, before accessing faculties
   clean_faculty();
-  await select_faculty(dep).then(() => {
-    // console.log("dep", dep, "fac", fac_index);
+  await select_faculty(depval).then(() => {
+    // console.log("dep", depval, "fac", fac_index);
     element.innerHTML = `
     <p class="sub-fac"><span><b>${subject.options[sub_indexval].text}</b> allocated for <b>${faculty.options[fac_indexval].text}</b></span>
     &ensp;
@@ -596,7 +607,7 @@ const get_data = (got) => {
             //   elem.faculty_id
             // );
             if (faculty.options[i].value == elem.faculty_id) {
-              console.log("got it");
+              // console.log("got it");
               fac_index = i;
               items.push({
                 id: elem.subject_allocation_id,
