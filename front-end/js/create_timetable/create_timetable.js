@@ -4,20 +4,21 @@ const academic_year_to = document.getElementById("academic_year_to");
 const semester = document.getElementById("semester");
 const departments = document.getElementById("departments");
 const alert = document.querySelector(".alert");
+const finish_later = document.getElementById("finish_later");
 let department = 0;
 
 // declare event listener for form
 create_timetable_form.addEventListener("submit", create_timetable);
 // event listener to fill the department selection list
 window.addEventListener("DOMContentLoaded", setup_timetable);
+// Finish later functionality
+finish_later.addEventListener("click", finish_later_timetable);
 
 // Setup the page
-function setup_timetable() {
-  setup_departments();
-
-  setTimeout(() => {
+async function setup_timetable() {
+  await setup_departments().then(() => {
     setup_items();
-  }, 2000);
+  });
 }
 
 // !!!Alert!!!
@@ -73,40 +74,50 @@ const fill_the_tags = (
 
 // setup the department selection list
 const setup_departments = () => {
-  const xhr = new XMLHttpRequest();
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
 
-  xhr.open("GET", "../../../api/info/departments.php", true);
+    xhr.open("GET", "../../../api/info/departments.php", true);
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-      const got = JSON.parse(xhr.responseText);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == XMLHttpRequest.DONE) {
+        const got = JSON.parse(xhr.responseText);
 
-      if (got.error) {
-        window.alert(got.error);
-      } else {
-        fill_departments(got);
+        if (got.error) {
+          reject(window.alert(got.error));
+        } else {
+          resolve(fill_departments(got));
+        }
       }
-    }
-  };
-  xhr.send();
+    };
+    xhr.send();
+  });
 };
 
 // Fill the departments select tag
 const fill_departments = (got) => {
-  got.forEach((element) => {
-    create_dept(element.department_id, element.department);
+  return new Promise((resolve, reject) => {
+    got.forEach((element, index, array) => {
+      create_dept(element.department_id, element.department);
+
+      if (index + 1 === array.length) {
+        resolve();
+      }
+    });
   });
 };
 
 // Options for departments select tag
 const create_dept = (id, department) => {
-  const element = document.createElement("option");
-  let attr = document.createAttribute("value");
-  attr.value = id;
-  element.setAttributeNode(attr);
-  element.innerHTML = `${department}`;
+  return new Promise((resolve, reject) => {
+    const element = document.createElement("option");
+    let attr = document.createAttribute("value");
+    attr.value = id;
+    element.setAttributeNode(attr);
+    element.innerHTML = `${department}`;
 
-  departments.appendChild(element);
+    resolve(departments.appendChild(element));
+  });
 };
 
 // ----------------------------------------- Create/Edit time table ---------------------------- //
@@ -192,3 +203,47 @@ const edit_timetable = () => {
 
   xhr.send(JSON.stringify(timetable));
 };
+
+// finish later functionality
+function finish_later_timetable(e) {
+  e.preventDefault();
+
+  const tt = get_local_storage();
+
+  const xhr = new XMLHttpRequest();
+
+  if (tt.timetable_id) {
+    xhr.open(
+      "PUT",
+      `../../../api/timetable/timetable.php?ID=${tt.timetable_id}`,
+      true
+    );
+  } else {
+    xhr.open("POST", `../../../api/timetable/timetable.php`, true);
+  }
+
+  const timetable = {
+    academic_year_from: academic_year_from.value,
+    academic_year_to: academic_year_to.value,
+    department_id: departments.value,
+    semester: semester.value,
+  };
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      const got = JSON.parse(xhr.responseText);
+
+      if (got.error) {
+        window.alert(got.error);
+      } else {
+        if (tt.timetable_id) {
+          window.localStorage.removeItem("timetable");
+        }
+
+        window.location.replace("./homepage.html");
+      }
+    }
+  };
+
+  xhr.send(JSON.stringify(timetable));
+}

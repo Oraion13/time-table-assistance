@@ -8,6 +8,7 @@ const allocate = document.getElementById("allocate");
 const allocated = document.getElementById("allocated");
 const clear_all = document.getElementById("clear_all");
 const alert = document.querySelector(".alert");
+const finish_later = document.getElementById("finish_later");
 
 // edit option
 let edit_element;
@@ -205,6 +206,8 @@ allocate.addEventListener("click", add_item);
 clear_all.addEventListener("click", clear_items);
 // form submitted
 subject_allocation_form.addEventListener("submit", subject_allocation);
+// finish later functionality
+finish_later.addEventListener("click", finish_later_subject_allocation);
 // ------------------------------------------  Create, Delete, Update  --------------------------------- //
 
 // Generate unique ID
@@ -576,6 +579,47 @@ function subject_allocation(e) {
   xhr.send(JSON.stringify(subject_allocations));
 }
 
+// finish later functionality
+function finish_later_subject_allocation(e) {
+  e.preventDefault();
+
+  let subject_allocations = [];
+
+  const sub_fac = JSON.parse(window.localStorage.getItem("subject_allocation"));
+  const timetable = JSON.parse(window.localStorage.getItem("timetable"));
+
+  sub_fac.forEach((elem) => {
+    subject_allocations.push({
+      subject_allocation_id: isNaN(elem.id) ? 0 : elem.id,
+      subject_id: elem.sub,
+      faculty_id: elem.fac,
+    });
+  });
+
+  const xhr = new XMLHttpRequest();
+
+  xhr.open(
+    "POST",
+    `../../../api/timetable/subject_allocation.php?ID=${timetable.timetable_id}`,
+    true
+  );
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      const got = JSON.parse(xhr.responseText);
+
+      if (got.error) {
+        display_alert(got.error, "danger");
+      } else {
+        window.localStorage.removeItem("subject_allocation");
+        window.localStorage.removeItem("timetable");
+        window.location.replace("./homepage.html");
+      }
+    }
+  };
+
+  xhr.send(JSON.stringify(subject_allocations));
+}
 // ------------------------------------------- Data from DB ---------------------------------------------- //
 
 // asign the data
