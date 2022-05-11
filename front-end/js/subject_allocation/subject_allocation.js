@@ -20,18 +20,6 @@ let edit_fac_index;
 let edit_flag = false;
 let edit_id = "";
 
-// setup subject list and faculty list
-window.addEventListener("DOMContentLoaded", setup_subject_faculty);
-//choose department
-department.addEventListener("change", select_departments);
-
-// add another subject
-allocate.addEventListener("click", add_item);
-// clear all allocated subjects
-clear_all.addEventListener("click", clear_items);
-// form submitted
-subject_allocation_form.addEventListener("submit", subject_allocation);
-
 // get timetable from local storage
 const get_timetable = () => {
   return window.localStorage.getItem("timetable")
@@ -40,173 +28,183 @@ const get_timetable = () => {
 };
 
 // setup subjects
-const setup_subject = (subjects) => {
-  console.log("ab");
-  const timetable = get_timetable();
+const setup_subject = () => {
+  return new Promise((resolve, reject) => {
+    const timetable = get_timetable();
 
-  const xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
 
-  // get subjects
-  xhr.open(
-    "GET",
-    `../../../api/info/subjects.php?dept=${timetable.department_id}&sem=${timetable.semester}`,
-    true
-  );
+    // get subjects
+    xhr.open(
+      "GET",
+      `../../../api/info/subjects.php?dept=${timetable.department_id}&sem=${timetable.semester}`,
+      true
+    );
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-      const got = JSON.parse(xhr.responseText);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == XMLHttpRequest.DONE) {
+        const got = JSON.parse(xhr.responseText);
 
-      if (got.error) {
-        alert(got.error);
-      } else {
-        got.forEach((element) => {
-          append_subject(
-            element.subject_id,
-            element.subject_code,
-            element.subject
-          );
-        });
+        if (got.error) {
+          reject(alert(got.error));
+        } else {
+          got.forEach((element, index, array) => {
+            append_subject(
+              element.subject_id,
+              element.subject_code,
+              element.subject
+            );
+
+            if (index + 1 === array.length) {
+              resolve();
+            }
+          });
+        }
       }
-    }
-  };
+    };
 
-  xhr.send();
+    xhr.send();
+  });
+};
+
+// append a child element in the document list
+const append_subject = (id, code, value) => {
+  return new Promise((resolve, reject) => {
+    const element = document.createElement("option");
+    let attr = document.createAttribute("value");
+    attr.value = id;
+    element.setAttributeNode(attr);
+    element.innerHTML = `${code} - ${value}`;
+
+    resolve(subject.appendChild(element));
+  });
 };
 
 // setup the department selection list
 const setup_departments = () => {
-  console.log("abcdefghijk");
-  const xhr = new XMLHttpRequest();
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
 
-  xhr.open("GET", "../../../api/info/departments.php", true);
+    xhr.open("GET", "../../../api/info/departments.php", true);
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-      const got = JSON.parse(xhr.responseText);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == XMLHttpRequest.DONE) {
+        const got = JSON.parse(xhr.responseText);
 
-      if (got.error) {
-        window.alert(got.error);
-      } else {
-        fill_departments(got);
+        if (got.error) {
+          reject(window.alert(got.error));
+        } else {
+          resolve(fill_departments(got));
+        }
       }
-    }
-  };
-  xhr.send();
+    };
+    xhr.send();
+  });
 };
 
 // Fill the departments select tag
-const fill_departments = (got) => {
-  got.forEach((element) => {
+const fill_departments = async (got) => {
+  await got.forEach((element) => {
     create_dept(element.department_id, element.department);
   });
 };
 
 // Options for departments select tag
 const create_dept = (id, department) => {
-  const element = document.createElement("option");
-  let attr = document.createAttribute("value");
-  attr.value = id;
-  element.setAttributeNode(attr);
-  element.innerHTML = `${department}`;
+  return new Promise((resolve, reject) => {
+    const element = document.createElement("option");
+    let attr = document.createAttribute("value");
+    attr.value = id;
+    element.setAttributeNode(attr);
+    element.innerHTML = `${department}`;
 
-  departments.appendChild(element);
+    resolve(departments.appendChild(element));
+  });
 };
-// append a child element in the document list
-const append_subject = (id, code, value) => {
-  const element = document.createElement("option");
-  let attr = document.createAttribute("value");
-  attr.value = id;
-  element.setAttributeNode(attr);
-  element.innerHTML = `${code} - ${value}`;
 
-  subject.appendChild(element);
+// Clena the faculty list
+const clean_faculty = () => {
+  return new Promise((resolve, reject) => {
+    faculty.innerHTML =
+      '<option value="default" selected>Choose Faculty...</option>';
+    resolve();
+  });
 };
 
 // setup faculties
-const setup_faculty = (faculties) => {
-  const timetable = get_timetable();
+const setup_faculty = () => {
+  select_faculty(departments.value);
+};
 
-  const xhr = new XMLHttpRequest();
-  // get faculties
-  xhr.open(
-    "GET",
-    `../../../api/info/faculties.php?dept=${timetable.department_id}`,
-    true
-  );
+// select faculties by department
+const select_faculty = (id) => {
+  return new Promise((resolve, reject) => {
+    // console.log("dep", id);
+    // clean faculty
+    clean_faculty().then(() => {
+      const xhr = new XMLHttpRequest();
+      // get faculties
+      xhr.open("GET", `../../../api/info/faculties.php?dept=${id}`, true);
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-      const got = JSON.parse(xhr.responseText);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+          const got = JSON.parse(xhr.responseText);
 
-      if (got.error) {
-        alert(got.error);
-      } else {
-        got.forEach((element) => {
-          append_faculty(
-            element.faculty_id,
-            element.faculty_code,
-            element.faculty
-          );
-        });
-      }
-    }
-  };
+          if (got.error) {
+            reject(alert(got.error));
+          } else {
+            got.forEach((element, index, array) => {
+              append_faculty(
+                element.faculty_id,
+                element.faculty_code,
+                element.faculty
+              );
 
-  xhr.send();
+              if (index + 1 === array.length) {
+                resolve();
+              }
+            });
+          }
+        }
+      };
+
+      xhr.send();
+    });
+  });
 };
 
 // append a child element in the document list
 const append_faculty = (id, code, value) => {
-  const element = document.createElement("option");
-  let attr = document.createAttribute("value");
-  attr.value = id;
-  element.setAttributeNode(attr);
-  element.innerHTML = `${code} - ${value}`;
+  return new Promise((resolve, reject) => {
+    const element = document.createElement("option");
+    let attr = document.createAttribute("value");
+    attr.value = id;
+    element.setAttributeNode(attr);
+    element.classList.add("faculty-dep");
+    element.innerHTML = `${code} - ${value}`;
 
-  faculty.appendChild(element);
+    resolve(faculty.appendChild(element));
+  });
 };
-function select_departments() {
-  const xhr = new XMLHttpRequest();
-  // get faculties
-  xhr.open(
-    "GET",
-    `../../../api/info/faculties.php?dept=${department.department_id}`,
-    true
-  );
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-      const got = JSON.parse(xhr.responseText);
-
-      if (got.error) {
-        alert(got.error);
-      } else {
-        got.forEach((element) => {
-          append_faculty(
-            element.faculty_id,
-            element.faculty_code,
-            element.faculty
-          );
-        });
-      }
-    }
-  };
-
-  xhr.send();
-}
 // setup faculties and subjects
 async function setup_subject_faculty() {
-  console.log("aaaaaa");
-  setup_subject();
-  setup_departments();
-  setup_faculty();
-
-  setTimeout(() => {
-    db_data();
-  }, 2000);
+  await setup_subject();
+  await setup_departments();
+  // setup_faculty();
+  await db_data();
 }
 
+// setup subject list and faculty list
+window.addEventListener("DOMContentLoaded", setup_subject_faculty);
+//choose department
+departments.addEventListener("change", setup_faculty);
+// add another subject
+allocate.addEventListener("click", add_item);
+// clear all allocated subjects
+clear_all.addEventListener("click", clear_items);
+// form submitted
+subject_allocation_form.addEventListener("submit", subject_allocation);
 // ------------------------------------------  Create, Delete, Update  --------------------------------- //
 
 // Generate unique ID
@@ -231,15 +229,17 @@ function display_alert(text, action) {
 
 // clear items
 function clear_items() {
-  window.localStorage.removeItem("subject_allocation");
-  const items = document.querySelectorAll(".subject-faculty");
-  if (items.length > 0) {
-    items.forEach(function (item) {
-      allocated.removeChild(item);
-    });
-  }
-  display_alert("removed all allocations", "danger");
-  set_back_to_default();
+  return new Promise((resolve, reject) => {
+    window.localStorage.removeItem("subject_allocation");
+    const items = document.querySelectorAll(".subject-faculty");
+    if (items.length > 0) {
+      items.forEach(function (item) {
+        allocated.removeChild(item);
+      });
+    }
+    display_alert("removed all allocations", "danger");
+    resolve(set_back_to_default());
+  });
 }
 
 // delete an item
@@ -277,6 +277,7 @@ function edit_item(e) {
 // set backt to defaults
 function set_back_to_default() {
   subject.value = "default";
+  departments.value = "default";
   faculty.value = "default";
   edit_flag = false;
   edit_id = "";
@@ -286,7 +287,7 @@ function set_back_to_default() {
 // check for duplicates
 function check_for_duplicates(sub, fac) {
   const items = get_local_storage();
-  console.log(items);
+  // console.log(items);
   // traverse and find a combo
   return items && items.find((item) => sub == item.sub && fac == item.fac);
 }
@@ -296,14 +297,9 @@ function add_item(e) {
   e.preventDefault();
 
   // ------------------- create -------------------- //
-  if (
-    !isNaN(subject.value) &&
-    !isNaN(faculty.value) &&
-    !isNaN(department.value) &&
-    !edit_flag
-  ) {
+  if (!isNaN(subject.value) && !isNaN(faculty.value) && !edit_flag) {
     // check for duplicates
-    if (check_for_duplicates(subject.value, department.value, faculty.value)) {
+    if (check_for_duplicates(subject.value, faculty.value)) {
       display_alert("subject already allocated", "warning");
       return;
     }
@@ -314,8 +310,6 @@ function add_item(e) {
     attr.value = id;
     let sub = document.createAttribute("data-sub");
     sub.value = subject.value;
-    let dep = document.createAttribute("data-dep");
-    fac.value = faculty.value;
     let fac = document.createAttribute("data-fac");
     fac.value = faculty.value;
     let sub_index = document.createAttribute("data-sub_index");
@@ -325,7 +319,6 @@ function add_item(e) {
 
     element.setAttributeNode(attr);
     element.setAttributeNode(sub);
-    element.setAttributeNode(dep);
     element.setAttributeNode(fac);
     element.setAttributeNode(sub_index);
     element.setAttributeNode(fac_index);
@@ -360,6 +353,7 @@ function add_item(e) {
       id,
       subject.value,
       faculty.value,
+      departments.value,
       subject.selectedIndex,
       faculty.selectedIndex
     );
@@ -387,6 +381,7 @@ function add_item(e) {
       edit_id,
       subject.value,
       faculty.value,
+      departments.value,
       subject.selectedIndex,
       faculty.selectedIndex
     );
@@ -399,10 +394,10 @@ function add_item(e) {
 // ------------------------------------------ Local Storage ------------------------------------------ //
 
 // add to local storage
-function add_to_local_storage(id, sub, fac, sub_index, fac_index) {
-  const grocery = { id, sub, fac, sub_index, fac_index };
+function add_to_local_storage(id, sub, fac, dep, sub_index, fac_index) {
+  const alloc = { id, sub, fac, dep, sub_index, fac_index };
   let items = get_local_storage();
-  items.push(grocery);
+  items.push(alloc);
   window.localStorage.setItem("subject_allocation", JSON.stringify(items));
 }
 
@@ -427,13 +422,14 @@ function remove_from_local_storage(id) {
 }
 
 // edit an element in local storage
-function edit_local_storage(id, sub, fac, sub_index, fac_index) {
+function edit_local_storage(id, sub, fac, dep, sub_index, fac_index) {
   let items = get_local_storage();
 
   items = items.map(function (item) {
     if (item.id == id) {
       item.sub = sub;
       item.fac = fac;
+      item.dep = dep;
       item.sub_index = sub_index;
       item.fac_index = fac_index;
     }
@@ -448,13 +444,14 @@ function edit_local_storage(id, sub, fac, sub_index, fac_index) {
 // get from local storage
 function setup_items() {
   let items = get_local_storage();
-
+  // console.log("local storage", items);
   if (items.length > 0) {
     items.forEach(function (item) {
       create_list_item(
         item.id,
         item.sub,
         item.fac,
+        item.dep,
         item.sub_index,
         item.fac_index
       );
@@ -465,7 +462,14 @@ function setup_items() {
 }
 
 // append te child element to html
-function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
+async function create_list_item(
+  id,
+  subval,
+  facval,
+  dep,
+  sub_indexval,
+  fac_indexval
+) {
   const element = document.createElement("article");
   let attr = document.createAttribute("data-id");
   attr.value = id;
@@ -485,7 +489,11 @@ function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
   element.setAttributeNode(fac_index);
   element.classList.add("subject-faculty");
 
-  element.innerHTML = `
+  // setup department, before accessing faculties
+  clean_faculty();
+  await select_faculty(dep).then(() => {
+    // console.log("dep", dep, "fac", fac_index);
+    element.innerHTML = `
     <p class="sub-fac"><span><b>${subject.options[sub_indexval].text}</b> allocated for <b>${faculty.options[fac_indexval].text}</b></span>
     &ensp;
               <button type="button" class="edit-btn btn btn-warning">
@@ -495,14 +503,17 @@ function create_list_item(id, subval, facval, sub_indexval, fac_indexval) {
                 <i class="fas fa-trash"></i>
               </button></p>
           `;
-  // add event listeners to both buttons;
-  const deleteBtn = element.querySelector(".delete-btn");
-  deleteBtn.addEventListener("click", delete_item);
-  const editBtn = element.querySelector(".edit-btn");
-  editBtn.addEventListener("click", edit_item);
+    // add event listeners to both buttons;
+    const deleteBtn = element.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", delete_item);
+    const editBtn = element.querySelector(".edit-btn");
+    editBtn.addEventListener("click", edit_item);
 
-  // append child
-  allocated.appendChild(element);
+    // append child
+    allocated.appendChild(element);
+
+    clean_faculty();
+  });
 }
 
 // -------------------------------------------- submit form -------------------------------------------- //
@@ -556,59 +567,94 @@ function subject_allocation(e) {
 
 // ------------------------------------------- Data from DB ---------------------------------------------- //
 
-const db_data = () => {
-  const timetable = JSON.parse(window.localStorage.getItem("timetable"));
+// asign the data
 
-  const xhr = new XMLHttpRequest();
+const get_data = (got) => {
+  return new Promise(async (resolve, reject) => {
+    // If got the data
+    let items = [];
+    if (got.length !== 0) {
+      await got.forEach(async (elem, index, array) => {
+        let sub_index = 0;
+        let fac_index = 0;
 
-  xhr.open(
-    "GET",
-    `../../../api/timetable/subject_allocation.php?ID=${timetable.timetable_id}`,
-    true
-  );
+        for (i in subject.options) {
+          if (subject.options[i].value == elem.subject_id) {
+            sub_index = i;
+          }
+        }
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-      const got = JSON.parse(xhr.responseText);
+        // setup department, before accessing faculties
+        await select_faculty(elem.department_id).then(async () => {
+          // console.log("im in");
+          // console.log("items", items);
+          for (i in faculty.options) {
+            // console.log(
+            //   "fac",
+            //   faculty.options[i].value,
+            //   "elem",
+            //   elem.faculty_id
+            // );
+            if (faculty.options[i].value == elem.faculty_id) {
+              console.log("got it");
+              fac_index = i;
+              items.push({
+                id: elem.subject_allocation_id,
+                sub: elem.subject_id,
+                fac: elem.faculty_id,
+                dep: elem.department_id,
+                sub_index: Number(sub_index),
+                fac_index: Number(fac_index),
+              });
 
-      if (got.error) {
-        display_alert(got.error, "danger");
-      } else {
-        let items = [];
-        if (got.length !== 0) {
-          got.forEach((elem) => {
-            let sub_index = 0;
-            let fac_index = 0;
-
-            for (i in subject.options) {
-              if (subject.options[i].value == elem.subject_id) {
-                sub_index = i;
-              }
+              clean_faculty();
+              break;
             }
+          }
+        });
 
-            for (i in faculty.options) {
-              if (faculty.options[i].value == elem.faculty_id) {
-                fac_index = i;
-              }
-            }
-
-            items.push({
-              id: elem.subject_allocation_id,
-              sub: elem.subject_id,
-              fac: elem.faculty_id,
-              sub_index: Number(sub_index),
-              fac_index: Number(fac_index),
-            });
-          });
-          window.localStorage.setItem(
-            "subject_allocation",
-            JSON.stringify(items)
+        if (index + 1 === array.length) {
+          // allocate the local storage
+          resolve(
+            window.localStorage.setItem(
+              "subject_allocation",
+              JSON.stringify(items)
+            )
           );
         }
-      }
+      });
     }
-  };
+  });
+};
 
-  setup_items();
-  xhr.send();
+// get data from db
+const db_data = () => {
+  return new Promise(async (resolve, reject) => {
+    const timetable = JSON.parse(window.localStorage.getItem("timetable"));
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.open(
+      "GET",
+      `../../../api/timetable/subject_allocation.php?ID=${timetable.timetable_id}`,
+      true
+    );
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == XMLHttpRequest.DONE) {
+        const got = JSON.parse(xhr.responseText);
+
+        if (got.error) {
+          // if can't get the data, thorw the error
+          reject(display_alert(got.error, "danger"));
+        } else {
+          // assign the data
+          get_data(got).then(() => {
+            resolve(setup_items());
+          });
+        }
+      }
+    };
+    xhr.send();
+  });
 };

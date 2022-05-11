@@ -25,7 +25,7 @@ class Subject_allocation
     {
         $columns = $this->table . '.subject_allocation_id, ' . $this->table . '.timetable_id, '
             . $this->table . '.subject_id, ' . $this->subjects . '.subject, ' . $this->table . '.faculty_id, '
-            . $this->faculties . '.faculty';
+            . $this->faculties . '.faculty, ' . $this->faculties . '.department_id';
         $query = 'SELECT ' . $columns . ' FROM ((' . $this->table . ' INNER JOIN ' . $this->subjects . ' ON '
             . $this->table . '.subject_id = ' . $this->subjects . '.subject_id) INNER JOIN '
             . $this->faculties . ' ON ' . $this->table . '.faculty_id = '
@@ -45,7 +45,7 @@ class Subject_allocation
     {
         $columns = $this->table . '.subject_allocation_id, ' . $this->table . '.timetable_id, '
             . $this->table . '.subject_id, ' . $this->subjects . '.subject, ' . $this->table . '.faculty_id, '
-            . $this->faculties . '.faculty';
+            . $this->faculties . '.faculty, ' . $this->faculties . '.department_id';
         $query = 'SELECT ' . $columns . ' FROM ((' . $this->table . ' INNER JOIN ' . $this->subjects . ' ON '
             . $this->table . '.timetable_id = :timetable_id AND ' . $this->table . '.subject_id = '
             . $this->subjects . '.subject_id) INNER JOIN ' . $this->faculties . ' ON '
@@ -68,7 +68,7 @@ class Subject_allocation
     // read only the row
     public function read_only_row()
     {
-        $columns = $this->table . '.faculty_id, ' . $this->faculties . '.faculty';
+        $columns = $this->table . '.faculty_id, ' . $this->faculties . '.faculty, ' . $this->faculties . '.department_id';
         $query = 'SELECT ' . $columns . ' FROM (' . $this->table . ' INNER JOIN '
             . $this->faculties . ' ON ' . $this->table . '.subject_allocation_id = :subject_allocation_id AND '
             . $this->table . '.faculty_id =' . $this->faculties . '.faculty_id)';
