@@ -80,8 +80,6 @@ class Timetable_api extends Timetables
             if ($this->Timetable->post()) {
                 $row = $this->Timetable->read_single();
 
-                $_SESSION['timetable_id'] = $row['timetable_id'];
-
                 echo json_encode(
                     array(
                         'timetable_id' => $row['timetable_id'],

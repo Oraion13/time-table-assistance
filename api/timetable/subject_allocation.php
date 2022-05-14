@@ -190,9 +190,5 @@ loggedin();
 // POST/UPDATE (PUT) a user's previous positions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'PUT') {
     $Subject_allocation_api = new Subject_allocation_api();
-    if (isset($_SESSION['timetable_id'])) {
-        $Subject_allocation_api->put($_SESSION['timetable_id']);
-    } else {
-        $Subject_allocation_api->put($_GET['ID']);
-    }
+    $Subject_allocation_api->put($_GET['ID']);
 }

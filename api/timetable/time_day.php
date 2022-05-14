@@ -256,10 +256,6 @@ class Time_day_api extends Time_day
             ++$count;
         }
 
-        if (isset($_SESSION['timetable_id'])) {
-            unset($_SESSION['timetable_id']);
-        }
-
         $this->get_by_id($id);
     }
 }
@@ -282,9 +278,5 @@ loggedin();
 // POST/UPDATE (PUT) a user's previous positions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'PUT') {
     $Time_day_api = new Time_day_api();
-    if (isset($_SESSION['timetable_id'])) {
-        $Time_day_api->put($_SESSION['timetable_id']);
-    } else {
-        $Time_day_api->put($_GET['ID']);
-    }
+    $Time_day_api->put($_GET['ID']);
 }
