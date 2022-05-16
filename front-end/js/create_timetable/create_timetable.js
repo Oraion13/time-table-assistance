@@ -159,6 +159,7 @@ function create_timetable(e) {
 
       if (got.error) {
         window.alert(got.error);
+        return;
       } else {
         window.localStorage.setItem("timetable", JSON.stringify(got));
         window.location.replace("./subjectallocation.html");
@@ -194,6 +195,7 @@ const edit_timetable = () => {
 
       if (got.error) {
         window.alert(got.error);
+        return;
       } else {
         window.localStorage.setItem("timetable", JSON.stringify(got));
         window.location.replace("./subjectallocation.html");

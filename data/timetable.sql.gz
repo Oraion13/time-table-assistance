@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 02, 2022 at 05:31 PM
+-- Generation Time: May 16, 2022 at 11:40 AM
 -- Server version: 8.0.28
--- PHP Version: 8.1.4
+-- PHP Version: 8.0.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -79,26 +79,15 @@ CREATE TABLE `timetable_faculties` (
 --
 
 INSERT INTO `timetable_faculties` (`faculty_id`, `faculty_code`, `faculty`, `department_id`) VALUES
-(1, '1234', 'Hulk', 1),
-(2, '2234', 'Thor', 2),
-(3, '2334', 'Captain America', 2),
-(4, '2344', 'Falcon', 3),
-(5, '2345', 'Hawkeye', 4),
-(6, '3345', 'Black widow', 4),
-(7, '3445', 'Loki', 1),
-(8, '3455', 'Thanos', 2),
-(9, '3455', 'Iron man', 3),
-(10, '3456', 'Batman', 4),
-(11, '4456', 'Bruce Wayne', 1),
-(12, '4556', 'Kitty', 2),
-(13, '4557', 'Brock', 3),
-(14, '5557', 'Cena', 4),
-(15, '5657', 'Alita', 1),
-(16, '5667', 'Wanda', 2),
-(17, '5668', 'Vision', 3),
-(18, '6668', 'Hobbs', 4),
-(19, '6669', 'Shaw', 1),
-(20, '7669', 'Dom', 2);
+(21, '1111', 'Dr.K.Saravanan', 1),
+(22, '1112', 'Dr.N.Fareena', 1),
+(23, '1113', 'Mrs.T.Kavitha', 1),
+(24, '2221', 'Dr.K.Karuppasamy', 2),
+(25, '2222', 'Dr.A.Manivannan', 2),
+(26, '3331', 'Dr.K.Gokulakrishnan ', 3),
+(27, '3332', 'Mrs.E.Geetha ', 3),
+(28, '4441', 'Dr.O.Ganesh Babu ', 4),
+(29, '4442', 'Dr.J.Thirumal', 4);
 
 -- --------------------------------------------------------
 
@@ -181,17 +170,13 @@ CREATE TABLE `timetable_subject_allocations` (
 --
 
 INSERT INTO `timetable_subject_allocations` (`subject_allocation_id`, `timetable_id`, `subject_id`, `faculty_id`) VALUES
-(12, 7, 1, 2),
-(13, 7, 2, 7),
-(14, 7, 3, 11),
-(15, 7, 5, 1),
-(16, 9, 11, 2),
-(17, 9, 12, 7),
-(18, 9, 13, 11),
-(19, 9, 15, 1),
-(40, 16, 2, 7),
-(41, 16, 3, 11),
-(42, 16, 1, 15);
+(123, 32, 1, 22),
+(124, 32, 2, 24),
+(125, 32, 3, 26),
+(126, 32, 4, 23),
+(127, 32, 5, 28),
+(128, 32, 6, 25),
+(130, 32, 8, 27);
 
 -- --------------------------------------------------------
 
@@ -212,9 +197,7 @@ CREATE TABLE `timetable_timetables` (
 --
 
 INSERT INTO `timetable_timetables` (`timetable_id`, `academic_year_from`, `academic_year_to`, `department_id`, `semester`) VALUES
-(7, '2004', '2005', 1, 1),
-(9, '2004', '2005', 2, 2),
-(16, '2010', '2011', 1, 1);
+(32, '2018', '2022', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -229,22 +212,6 @@ CREATE TABLE `timetable_time_day` (
   `time` int DEFAULT NULL,
   `subject_allocation_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `timetable_time_day`
---
-
-INSERT INTO `timetable_time_day` (`time_day_id`, `timetable_id`, `day`, `time`, `subject_allocation_id`) VALUES
-(35, 7, 1, 1, 12),
-(36, 7, 1, 2, 13),
-(37, 7, 1, 3, 14),
-(39, 7, 1, 4, 15),
-(40, 7, 1, 5, 14),
-(61, 9, 2, 1, 16),
-(62, 9, 2, 2, 17),
-(63, 9, 2, 3, 18),
-(64, 9, 2, 5, 19),
-(65, 9, 2, 4, 18);
 
 --
 -- Indexes for dumped tables
@@ -320,7 +287,7 @@ ALTER TABLE `timetable_departments`
 -- AUTO_INCREMENT for table `timetable_faculties`
 --
 ALTER TABLE `timetable_faculties`
-  MODIFY `faculty_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `faculty_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `timetable_subjects`
@@ -332,13 +299,13 @@ ALTER TABLE `timetable_subjects`
 -- AUTO_INCREMENT for table `timetable_subject_allocations`
 --
 ALTER TABLE `timetable_subject_allocations`
-  MODIFY `subject_allocation_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `subject_allocation_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
 
 --
 -- AUTO_INCREMENT for table `timetable_timetables`
 --
 ALTER TABLE `timetable_timetables`
-  MODIFY `timetable_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `timetable_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `timetable_time_day`
