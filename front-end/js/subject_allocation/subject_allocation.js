@@ -296,7 +296,7 @@ function check_for_duplicates(sub, fac) {
   const items = get_local_storage();
   // console.log(items);
   // traverse and find a combo
-  return items && items.find((item) => sub == item.sub) || items.find((item) => sub == item.sub && fac == item.fac);
+  return items && (items.find((item) => sub == item.sub) || items.find((item) => sub == item.sub && fac == item.fac));
 }
 
 // add item to the list
