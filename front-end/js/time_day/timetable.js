@@ -1,4 +1,5 @@
 const subjects = document.querySelectorAll(".subjects");
+const submit = document.getElementById("submit");
 
 // get timetable from local storage
 const get_timetable = () => {
@@ -111,7 +112,10 @@ async function initialize() {
   await set_subject_allocation();
 }
 
+// initialize
 window.addEventListener("DOMContentLoaded", initialize);
+// submit form
+submit.addEventListener("click", submit_form);
 
 // --------------------------------------------- modify/change subject allocation ------------------------- //
 
@@ -171,4 +175,15 @@ function fill_faculty(e) {
       resolve(fill_subjects());
     });
   });
+}
+
+// ------------------------------------------- submit form ----------------------------------------- //
+
+function submit_form(e){
+  e.preventDefault();
+
+  let day = 0;
+  let time = 0;
+
+  let time_day = [];
 }
