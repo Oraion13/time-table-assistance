@@ -24,8 +24,9 @@ class Subject_allocation
     public function read()
     {
         $columns = $this->table . '.subject_allocation_id, ' . $this->table . '.timetable_id, '
-            . $this->table . '.subject_id, ' . $this->subjects . '.subject_code, ' . $this->subjects . '.subject, ' . $this->table . '.faculty_id, '
-            . $this->faculties . '.faculty_code, ' . $this->faculties . '.faculty, ' . $this->faculties . '.department_id';
+            . $this->table . '.subject_id, ' . $this->subjects . '.subject_code, ' . $this->subjects . '.contact_periods, '
+            . $this->subjects . '.subject, ' . $this->table . '.faculty_id, ' . $this->faculties . '.faculty_code, ' 
+            . $this->faculties . '.faculty, ' . $this->faculties . '.department_id';
         $query = 'SELECT ' . $columns . ' FROM ((' . $this->table . ' INNER JOIN ' . $this->subjects . ' ON '
             . $this->table . '.subject_id = ' . $this->subjects . '.subject_id) INNER JOIN '
             . $this->faculties . ' ON ' . $this->table . '.faculty_id = '
@@ -44,8 +45,9 @@ class Subject_allocation
     public function read_row()
     {
         $columns = $this->table . '.subject_allocation_id, ' . $this->table . '.timetable_id, '
-            . $this->table . '.subject_id, ' . $this->subjects . '.subject_code, ' . $this->subjects . '.subject, ' . $this->table . '.faculty_id, '
-            . $this->faculties . '.faculty_code, ' . $this->faculties . '.faculty, ' . $this->faculties . '.department_id';
+            . $this->table . '.subject_id, ' . $this->subjects . '.subject_code, ' . $this->subjects . '.contact_periods, '
+            . $this->subjects . '.subject, ' . $this->table . '.faculty_id, ' . $this->faculties . '.faculty_code, ' 
+            . $this->faculties . '.faculty, ' . $this->faculties . '.department_id';
         $query = 'SELECT ' . $columns . ' FROM ((' . $this->table . ' INNER JOIN ' . $this->subjects . ' ON '
             . $this->table . '.timetable_id = :timetable_id AND ' . $this->table . '.subject_id = '
             . $this->subjects . '.subject_id) INNER JOIN ' . $this->faculties . ' ON '
