@@ -1,6 +1,7 @@
 const subject_allocation_form = document.getElementById(
   "subject_allocation_form"
 );
+const category = document.getElementById("category");
 const subject = document.getElementById("subject");
 const departments = document.getElementById("departments");
 const faculty = document.getElementById("faculty");
@@ -13,6 +14,7 @@ const finish_later = document.getElementById("finish_later");
 // edit option
 let edit_element;
 let edit_tag;
+let edit_cat;
 let edit_sub;
 let edit_fac;
 let edit_dep;
@@ -28,8 +30,58 @@ const get_timetable = () => {
     : [];
 };
 
-// setup subjects
-const setup_subject = () => {
+// ************************************* Setup Categories List ****************************************** //
+
+// setup the category selection list
+const setup_categories = () => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("GET", "../../../api/info/categories.php", true);
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == XMLHttpRequest.DONE) {
+        const got = JSON.parse(xhr.responseText);
+
+        if (got.error) {
+          reject(window.alert(got.error));
+        } else {
+          resolve(fill_categories(got));
+        }
+      }
+    };
+    xhr.send();
+  });
+};
+
+// Fill the categories select tag
+const fill_categories = async (got) => {
+  await got.forEach((element) => {
+    create_categories(
+      element.category_id,
+      element.category,
+      element.category_name
+    );
+  });
+};
+
+// Options for categories select tag
+const create_categories = (id, cat, cat_name) => {
+  return new Promise((resolve, reject) => {
+    const element = document.createElement("option");
+    let attr = document.createAttribute("value");
+    attr.value = id;
+    element.setAttributeNode(attr);
+    element.innerHTML = `${cat_name} (${cat})`;
+
+    resolve(category.appendChild(element));
+  });
+};
+
+// ***************************************** Setup Subjects List ***************************************** //
+
+// get subjects
+const get_subjects = (cat) => {
   return new Promise((resolve, reject) => {
     const timetable = get_timetable();
 
@@ -38,7 +90,9 @@ const setup_subject = () => {
     // get subjects
     xhr.open(
       "GET",
-      `../../../api/info/subjects.php?dept=${timetable.department_id}&sem=${timetable.semester}`,
+      `../../../api/info/subjects.php?dept=${timetable.department_id}&sem=${
+        cat == 6 ? 0 : timetable.semester
+      }&cat=${cat}`,
       true
     );
 
@@ -49,22 +103,51 @@ const setup_subject = () => {
         if (got.error) {
           reject(alert(got.error));
         } else {
-          got.forEach((element, index, array) => {
-            append_subject(
-              element.subject_id,
-              element.subject_code,
-              element.subject
-            );
-
-            if (index + 1 === array.length) {
-              resolve();
-            }
-          });
+          resolve(got);
         }
       }
     };
 
     xhr.send();
+  });
+};
+
+// Clena the subjects list
+const clean_subject = () => {
+  return new Promise((resolve, reject) => {
+    subject.innerHTML =
+      '<option value="default" selected>Choose Subject...</option>';
+    resolve();
+  });
+};
+
+// setup subjects
+const setup_subject = () => {
+  return new Promise((resolve, reject) => {
+    resolve(select_subject(category.value));
+  });
+};
+
+const select_subject = (cat) => {
+  return new Promise(async (resolve, reject) => {
+    // clean subjects list
+    await clean_subject()
+      .then(async () => {
+        return get_subjects(cat);
+      })
+      .then((subjects) => {
+        subjects.forEach(async (element, index, array) => {
+          append_subject(
+            element.subject_id,
+            element.subject_code,
+            element.subject
+          );
+
+          if (index + 1 === array.length) {
+            resolve();
+          }
+        });
+      });
   });
 };
 
@@ -80,6 +163,8 @@ const append_subject = (id, code, value) => {
     resolve(subject.appendChild(element));
   });
 };
+
+// *************************************** Setup Departments List ******************************************* //
 
 // setup the department selection list
 const setup_departments = () => {
@@ -123,6 +208,31 @@ const create_dept = (id, department) => {
   });
 };
 
+// ****************************************** Setup Faculties List ******************************************* //
+
+// get faculty
+const get_faculties = (id) => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    // get faculties
+    xhr.open("GET", `../../../api/info/faculties.php?dept=${id}`, true);
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == XMLHttpRequest.DONE) {
+        const got = JSON.parse(xhr.responseText);
+
+        if (got.error) {
+          reject(alert(got.error));
+        } else {
+          resolve(got);
+        }
+      }
+    };
+
+    xhr.send();
+  });
+};
+
 // Clena the faculty list
 const clean_faculty = () => {
   return new Promise((resolve, reject) => {
@@ -139,38 +249,25 @@ const setup_faculty = () => {
 
 // select faculties by department
 const select_faculty = (id) => {
-  return new Promise((resolve, reject) => {
-    // console.log("dep", id);
+  return new Promise(async (resolve, reject) => {
     // clean faculty
-    clean_faculty().then(() => {
-      const xhr = new XMLHttpRequest();
-      // get faculties
-      xhr.open("GET", `../../../api/info/faculties.php?dept=${id}`, true);
+    await clean_faculty()
+      .then(() => {
+        return get_faculties(id);
+      })
+      .then((faculties) => {
+        faculties.forEach((element, index, array) => {
+          append_faculty(
+            element.faculty_id,
+            element.faculty_code,
+            element.faculty
+          );
 
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState == XMLHttpRequest.DONE) {
-          const got = JSON.parse(xhr.responseText);
-
-          if (got.error) {
-            reject(alert(got.error));
-          } else {
-            got.forEach((element, index, array) => {
-              append_faculty(
-                element.faculty_id,
-                element.faculty_code,
-                element.faculty
-              );
-
-              if (index + 1 === array.length) {
-                resolve();
-              }
-            });
+          if (index + 1 === array.length) {
+            resolve();
           }
-        }
-      };
-
-      xhr.send();
-    });
+        });
+      });
   });
 };
 
@@ -188,26 +285,36 @@ const append_faculty = (id, code, value) => {
   });
 };
 
+// ***************************************** Initally ******************************************* //
+
 // setup faculties and subjects
 async function setup_subject_faculty() {
-  await setup_subject();
+  await setup_categories();
+  // await setup_subject();
   await setup_departments();
   // setup_faculty();
-  await db_data();
+  if (get_local_storage().length !== 0) {
+    setup_items();
+  } else {
+    await db_data();
+  }
 }
 
 // setup subject list and faculty list
 window.addEventListener("DOMContentLoaded", setup_subject_faculty);
+// choose category
+category.addEventListener("change", setup_subject);
 //choose department
 departments.addEventListener("change", setup_faculty);
 // add another subject
 allocate.addEventListener("click", add_item);
 // clear all allocated subjects
 clear_all.addEventListener("click", clear_items);
-// form submitted
-subject_allocation_form.addEventListener("submit", subject_allocation);
 // finish later functionality
 finish_later.addEventListener("click", finish_later_subject_allocation);
+// form submitted
+subject_allocation_form.addEventListener("submit", subject_allocation);
+
 // ------------------------------------------  Create, Delete, Update  --------------------------------- //
 
 // Generate unique ID
@@ -231,8 +338,15 @@ function display_alert(text, action) {
 }
 
 // clear items
-function clear_items() {
+function clear_items(e) {
+  e.preventDefault();
+
   return new Promise((resolve, reject) => {
+    // confirm clear
+    if(!window.confirm("Are you sure to clear all?")){
+      return;
+    }
+
     window.localStorage.removeItem("subject_allocation");
     const items = document.querySelectorAll(".subject-faculty");
     if (items.length > 0) {
@@ -264,25 +378,30 @@ async function edit_item(e) {
   // set edit item
   edit_tag = element;
   edit_element = e.currentTarget.previousElementSibling;
+  edit_cat = element.dataset.cat;
   edit_sub = element.dataset.sub;
   edit_fac = element.dataset.fac;
   edit_dep = element.dataset.dep;
-  await select_faculty(edit_dep).then(() => {
-    edit_sub_index = element.dataset.sub_index;
-    edit_fac_index = element.dataset.fac_index;
-    // set form value
-    subject.value = edit_sub;
-    departments.value = edit_dep;
-    faculty.value = edit_fac;
-    edit_flag = true;
-    edit_id = element.dataset.id;
-    //
-    allocate.textContent = "Edit";
+  await select_subject(edit_cat).then(async () => {
+    await select_faculty(edit_dep).then(() => {
+      edit_sub_index = element.dataset.sub_index;
+      edit_fac_index = element.dataset.fac_index;
+      // set form value
+      category.value = edit_cat;
+      subject.value = edit_sub;
+      departments.value = edit_dep;
+      faculty.value = edit_fac;
+      edit_flag = true;
+      edit_id = element.dataset.id;
+      //
+      allocate.textContent = "Edit";
+    });
   });
 }
 
 // set backt to defaults
 function set_back_to_default() {
+  category.value = "default";
   subject.value = "default";
   departments.value = "default";
   faculty.value = "default";
@@ -294,16 +413,19 @@ function set_back_to_default() {
 // check for duplicates
 function check_for_duplicates(sub, fac) {
   const items = get_local_storage();
-  // console.log(items);
   // traverse and find a combo
-  return items && (items.find((item) => sub == item.sub) || items.find((item) => sub == item.sub && fac == item.fac));
+  return (
+    items &&
+    (items.find((item) => sub == item.sub) ||
+      items.find((item) => sub == item.sub && fac == item.fac))
+  );
 }
 
 // add item to the list
 function add_item(e) {
   e.preventDefault();
 
-  // ------------------- create -------------------- //
+  // *************************************** create *************************************** //
   if (!isNaN(subject.value) && !isNaN(faculty.value) && !edit_flag) {
     // check for duplicates
     if (check_for_duplicates(subject.value, faculty.value)) {
@@ -315,6 +437,8 @@ function add_item(e) {
     const element = document.createElement("article");
     let attr = document.createAttribute("data-id");
     attr.value = id;
+    let cat = document.createAttribute("data-cat");
+    cat.value = category.value;
     let sub = document.createAttribute("data-sub");
     sub.value = subject.value;
     let fac = document.createAttribute("data-fac");
@@ -327,6 +451,7 @@ function add_item(e) {
     fac_index.value = faculty.selectedIndex;
 
     element.setAttributeNode(attr);
+    element.setAttributeNode(cat);
     element.setAttributeNode(sub);
     element.setAttributeNode(fac);
     element.setAttributeNode(dep);
@@ -361,6 +486,7 @@ function add_item(e) {
     // set local storage
     add_to_local_storage(
       id,
+      category.value,
       subject.value,
       faculty.value,
       departments.value,
@@ -369,13 +495,14 @@ function add_item(e) {
     );
     // // set back to default
     set_back_to_default();
-    // -------------- Edit ------------------- //
+    // ****************************************** Edit ****************************************** //
   } else if (!isNaN(subject.value) && !isNaN(faculty.value) && edit_flag) {
     // check for duplicates
     if (check_for_duplicates(subject.value, faculty.value)) {
       display_alert("subject already allocated", "warning");
     }
 
+    edit_tag.dataset.cat = category.value;
     edit_tag.dataset.sub = subject.value;
     edit_tag.dataset.fac = faculty.value;
     edit_tag.dataset.dep = departments.value;
@@ -390,6 +517,7 @@ function add_item(e) {
     // edit  local storage
     edit_local_storage(
       edit_id,
+      category.value,
       subject.value,
       faculty.value,
       departments.value,
@@ -402,11 +530,11 @@ function add_item(e) {
   }
 }
 
-// ------------------------------------------ Local Storage ------------------------------------------ //
+// -------------------------------------------- Local Storage -------------------------------------------- //
 
 // add to local storage
-function add_to_local_storage(id, sub, fac, dep, sub_index, fac_index) {
-  const alloc = { id, sub, fac, dep, sub_index, fac_index };
+function add_to_local_storage(id, cat, sub, fac, dep, sub_index, fac_index) {
+  const alloc = { id, cat, sub, fac, dep, sub_index, fac_index };
   let items = get_local_storage();
   items.push(alloc);
   window.localStorage.setItem("subject_allocation", JSON.stringify(items));
@@ -433,11 +561,12 @@ function remove_from_local_storage(id) {
 }
 
 // edit an element in local storage
-function edit_local_storage(id, sub, fac, dep, sub_index, fac_index) {
+function edit_local_storage(id, cat, sub, fac, dep, sub_index, fac_index) {
   let items = get_local_storage();
 
   items = items.map(function (item) {
     if (item.id == id) {
+      item.cat = cat;
       item.sub = sub;
       item.fac = fac;
       item.dep = dep;
@@ -450,7 +579,7 @@ function edit_local_storage(id, sub, fac, dep, sub_index, fac_index) {
   return;
 }
 
-// --------------------------------------- Setup Items after refresh ------------------------------------ //
+// --------------------------------------- Setup Items after refresh --------------------------------------- //
 
 // get from local storage
 function setup_items() {
@@ -460,6 +589,7 @@ function setup_items() {
     items.forEach(function (item) {
       create_list_item(
         item.id,
+        item.cat,
         item.sub,
         item.fac,
         item.dep,
@@ -475,6 +605,7 @@ function setup_items() {
 // append te child element to html
 async function create_list_item(
   id,
+  catval,
   subval,
   facval,
   depval,
@@ -484,6 +615,8 @@ async function create_list_item(
   const element = document.createElement("article");
   let attr = document.createAttribute("data-id");
   attr.value = id;
+  let cat = document.createAttribute("data-cat");
+  cat.value = catval;
   let sub = document.createAttribute("data-sub");
   sub.value = subval;
   let fac = document.createAttribute("data-fac");
@@ -496,6 +629,7 @@ async function create_list_item(
   fac_index.value = fac_indexval;
 
   element.setAttributeNode(attr);
+  element.setAttributeNode(cat);
   element.setAttributeNode(sub);
   element.setAttributeNode(fac);
   element.setAttributeNode(dep);
@@ -503,12 +637,19 @@ async function create_list_item(
   element.setAttributeNode(fac_index);
   element.classList.add("subject-faculty");
 
-  // setup department, before accessing faculties
-  clean_faculty();
-  await select_faculty(depval).then(() => {
-    // console.log("dep", depval, "fac", fac_index);
+  // get the names to display
+  let subject_name = "";
+  let faculty_name = "";
+
+  await get_subjects(catval).then((subjects) => {
+    subject_name = subjects[sub_indexval - 1].subject;
+  });
+
+  await get_faculties(depval).then((faculties) => {
+    faculty_name = faculties[fac_indexval - 1].faculty;
+
     element.innerHTML = `
-    <p class="sub-fac"><span><b>${subject.options[sub_indexval].text}</b> allocated for <b>${faculty.options[fac_indexval].text}</b></span>
+    <p class="sub-fac"><span><b>${subject_name}</b> allocated for <b>${faculty_name}</b></span>
     &ensp;
               <button type="button" class="edit-btn btn btn-warning">
                 <i class="fas fa-edit"></i>
@@ -525,21 +666,20 @@ async function create_list_item(
 
     // append child
     allocated.appendChild(element);
-
-    clean_faculty();
   });
 }
 
-// -------------------------------------------- submit form -------------------------------------------- //
+// ---------------------------------------------- submit form ---------------------------------------------- //
 
 function subject_allocation(e) {
   e.preventDefault();
 
   let subject_allocations = [];
 
-  const sub_fac = JSON.parse(window.localStorage.getItem("subject_allocation"));
-  const timetable = JSON.parse(window.localStorage.getItem("timetable"));
+  const sub_fac = get_local_storage();
+  const timetable = get_timetable();
 
+  // check if empty
   if (sub_fac.length <= 0) {
     display_alert("please allocate subjects", "danger");
     return;
@@ -568,9 +708,7 @@ function subject_allocation(e) {
       if (got.error) {
         display_alert(got.error, "danger");
       } else {
-        if (got.length !== 0) {
-          db_data();
-        }
+        window.localStorage.removeItem("subject_allocation");
         window.location.replace("./timetable.html");
       }
     }
@@ -585,8 +723,8 @@ function finish_later_subject_allocation(e) {
 
   let subject_allocations = [];
 
-  const sub_fac = JSON.parse(window.localStorage.getItem("subject_allocation"));
-  const timetable = JSON.parse(window.localStorage.getItem("timetable"));
+  const sub_fac = get_local_storage();
+  const timetable = get_timetable();
 
   sub_fac.forEach((elem) => {
     subject_allocations.push({
@@ -620,10 +758,11 @@ function finish_later_subject_allocation(e) {
 
   xhr.send(JSON.stringify(subject_allocations));
 }
-// ------------------------------------------- Data from DB ---------------------------------------------- //
+// ---------------------------------------------- Data from DB ---------------------------------------------- //
 
 // asign the data
 
+// setup local storage array
 const get_data = (got) => {
   return new Promise(async (resolve, reject) => {
     // If got the data
@@ -633,43 +772,38 @@ const get_data = (got) => {
         let sub_index = 0;
         let fac_index = 0;
 
-        for (i in subject.options) {
-          if (subject.options[i].value == elem.subject_id) {
-            sub_index = i;
-          }
-        }
-
-        // setup department, before accessing faculties
-        await select_faculty(elem.department_id).then(async () => {
-          // console.log("im in");
-          // console.log("items", items);
-          for (i in faculty.options) {
-            // console.log(
-            //   "fac",
-            //   faculty.options[i].value,
-            //   "elem",
-            //   elem.faculty_id
-            // );
-            if (faculty.options[i].value == elem.faculty_id) {
-              // console.log("got it");
-              fac_index = i;
-              items.push({
-                id: elem.subject_allocation_id,
-                sub: elem.subject_id,
-                fac: elem.faculty_id,
-                dep: elem.department_id,
-                sub_index: Number(sub_index),
-                fac_index: Number(fac_index),
-              });
-
-              clean_faculty();
-              break;
+        // get the subject index
+        await get_subjects(elem.category_id).then((subjects) => {
+          subjects.forEach((item, index) => {
+            if (item.subject_id == elem.subject_id) {
+              sub_index = index + 1;
+              return;
             }
-          }
+          });
+        });
+
+        // get the faculty index
+        await get_faculties(elem.department_id).then((faculties) => {
+          faculties.forEach((item, index) => {
+            if (item.faculty_id == elem.faculty_id) {
+              fac_index = index + 1;
+              return;
+            }
+          });
+          //
+          items.push({
+            id: elem.subject_allocation_id,
+            cat: elem.category_id,
+            sub: elem.subject_id,
+            fac: elem.faculty_id,
+            dep: elem.department_id,
+            sub_index: Number(sub_index),
+            fac_index: Number(fac_index),
+          });
         });
 
         if (index + 1 === array.length) {
-          // allocate the local storage
+          // allocate to local storage
           resolve(
             window.localStorage.setItem(
               "subject_allocation",

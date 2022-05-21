@@ -107,12 +107,37 @@ class Subjects_api extends Info
             die();
         }
     }
+
+    // Get all the data by dept_id, semester and category
+    public function get_dept_sem_cat()
+    {
+        // Get the user info from DB
+        $this->Subjects->department_id = $_GET['dept'];
+        $this->Subjects->semester = $_GET['sem'];
+        $this->Subjects->category_id = $_GET['cat'];
+        $all_data = $this->Subjects->read_by_dept_sem_cat();
+
+        if ($all_data) {
+            $data = array();
+            while ($row = $all_data->fetch(PDO::FETCH_ASSOC)) {
+                array_push($data, $row);
+            }
+            echo json_encode($data);
+            die();
+        } else {
+            send(400, 'error', 'no subjects found');
+            die();
+        }
+    }
 }
 
 // GET all the info
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $Subjects_api = new Subjects_api();
-    if (isset($_GET['dept']) && isset($_GET['sem']) && $_GET['dept'] != 0 && $_GET['sem'] != 0) {
+    if(isset($_GET['dept']) && isset($_GET['sem']) && isset($_GET['cat'])){
+        $Subjects_api->get_dept_sem_cat();
+    }
+    else if (isset($_GET['dept']) && isset($_GET['sem']) && $_GET['dept'] != 0 && $_GET['sem'] != 0) {
         $Subjects_api->get_dept_sem();
     } else if(isset($_GET['sem']) && $_GET['sem'] != 0) {
         $Subjects_api->get_sem();

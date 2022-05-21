@@ -10,9 +10,9 @@ require_once '../../config/DbConnection.php';
 require_once '../../utils/send.php';
 require_once '../../models/Info.php';
 
-class Departments_api extends Info
+class Categories_api extends Info
 {
-    private $Departments;
+    private $Categories;
 
     // Initialize connection with DB
     public function __construct()
@@ -21,18 +21,18 @@ class Departments_api extends Info
         $dbconnection = new DbConnection();
         $db = $dbconnection->connect();
 
-        // Create an object for timetable_departments table to do operations
-        $this->Departments = new Info($db);
+        // Create an object for timetable_subject_categories table to do operations
+        $this->Categories = new Info($db);
 
         // Set table name
-        $this->Departments->table = "timetable_departments";
+        $this->Categories->table = "timetable_subject_categories";
     }
 
     // Get all data
     public function get()
     {
         // Get the departments from DB
-        $all_data = $this->Departments->read();
+        $all_data = $this->Categories->read();
 
         if ($all_data) {
             $data = array();
@@ -42,7 +42,7 @@ class Departments_api extends Info
             echo json_encode($data);
             die();
         } else {
-            send(400, 'error', 'no departments found');
+            send(400, 'error', 'no categories found');
             die();
         }
     }
@@ -50,6 +50,6 @@ class Departments_api extends Info
 
 // GET all the info
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $Departments_api = new Departments_api();
-    $Departments_api->get();
+    $Categories_api = new Categories_api();
+    $Categories_api->get();
 }
