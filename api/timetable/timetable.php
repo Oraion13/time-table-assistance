@@ -59,6 +59,64 @@ class Timetable_api extends Timetables
         }
     }
 
+    public function get_by_dept_sem($dept, $sem)
+    {
+        // Get the time table from DB
+        $this->Timetable->department_id = $dept;
+        $this->Timetable->semester = $sem;
+        $all_data = $this->Timetable->read_by_dept_sem();
+
+        if ($all_data) {
+            $data = array();
+            while ($row = $all_data->fetch(PDO::FETCH_ASSOC)) {
+                array_push($data, $row);
+            }
+            echo json_encode($data);
+            die();
+        } else {
+            send(400, 'error', 'no time tables found');
+            die();
+        }
+    }
+
+    public function get_by_dept($dept)
+    {
+        // Get the time table from DB
+        $this->Timetable->department_id = $dept;
+        $all_data = $this->Timetable->read_by_dept();
+
+        if ($all_data) {
+            $data = array();
+            while ($row = $all_data->fetch(PDO::FETCH_ASSOC)) {
+                array_push($data, $row);
+            }
+            echo json_encode($data);
+            die();
+        } else {
+            send(400, 'error', 'no time tables found');
+            die();
+        }
+    }
+
+    public function get_by_sem($sem)
+    {
+        // Get the time table from DB
+        $this->Timetable->semester = $sem;
+        $all_data = $this->Timetable->read_by_sem();
+
+        if ($all_data) {
+            $data = array();
+            while ($row = $all_data->fetch(PDO::FETCH_ASSOC)) {
+                array_push($data, $row);
+            }
+            echo json_encode($data);
+            die();
+        } else {
+            send(400, 'error', 'no time tables found');
+            die();
+        }
+    }
+
     // POST a new time table
     public function post()
     {
@@ -155,7 +213,7 @@ class Timetable_api extends Timetables
         // Check for time table existance
         $all_data = $this->Timetable->read_row();
 
-        if(!$all_data){
+        if (!$all_data) {
             send(400, 'error', 'no time table found for ID: ' . $_GET['ID']);
             die();
         }
@@ -172,7 +230,13 @@ class Timetable_api extends Timetables
 // GET all the time table
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $Timetable_api = new Timetable_api();
-    if (isset($_GET['ID'])) {
+    if (isset($_GET['dept']) && isset($_GET['sem'])) {
+        $Timetable_api->get_by_dept_sem($_GET['dept'], $_GET['sem']);
+    } else if (isset($_GET['dept'])) {
+        $Timetable_api->get_by_dept($_GET['dept']);
+    } else if (isset($_GET['sem'])) {
+        $Timetable_api->get_by_sem($_GET['sem']);
+    } else if (isset($_GET['ID'])) {
         $Timetable_api->get_by_id($_GET['ID']);
     } else {
         $Timetable_api->get();
