@@ -93,12 +93,20 @@ class Time_day_api extends Time_day
 
         // Get faculty id from subject allocations table
         $this->Subject_allocation->subject_allocation_id = $subject_allocation_id;
-        $faculty = $this->Subject_allocation->read_only_row();
+        $faculty_id = $this->Subject_allocation->read_only_row();
 
-        $this->Time_day->faculty_id = $faculty['faculty_id'];
-        $existence = $this->Time_day->read_single();
+        // $this->Time_day->faculty_id = $faculty['faculty_id'];
+        $all_day = $this->Time_day->read_single();
 
-        if ($existence) {
+        $faculty_ids = array();
+        while ($row = $all_day->fetch(PDO::FETCH_ASSOC)) {
+            $this->Subject_allocation->subject_allocation_id = $row['subject_allocation_id'];
+            $faculty = $this->Subject_allocation->read_only_row();
+
+            array_push($faculty_ids, $faculty['faculty_id']);
+        }
+
+        if (in_array($faculty_id['faculty_id'], $faculty_ids)) {
             send(400, "error", $faculty['faculty'] . ' already had a period at '
                 . $days[$day] . ': ' . $this->ordinal_suffix_of($time) . ' hour');
             die();
@@ -197,7 +205,7 @@ class Time_day_api extends Time_day
 
                     if (strcmp($element['day'], $data[$count]->day) !== 0) {
                         if (
-                            $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day - 1, $data[$count]->time)
+                            $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day, $data[$count]->time)
                             && !$this->Time_day->update_row('day')
                         ) {
                             // If can't update_row the data, throw an error message
@@ -208,7 +216,7 @@ class Time_day_api extends Time_day
 
                     if (strcmp($element['time'], $data[$count]->time) !== 0) {
                         if (
-                            $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day - 1, $data[$count]->time)
+                            $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day, $data[$count]->time)
                             && !$this->Time_day->update_row('time')
                         ) {
                             // If can't update_row the data, throw an error message
@@ -219,7 +227,7 @@ class Time_day_api extends Time_day
 
                     if (strcmp($element['subject_allocation_id'], $data[$count]->subject_allocation_id) !== 0) {
                         if (
-                            $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day - 1, $data[$count]->time)
+                            $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day, $data[$count]->time)
                             && !$this->Time_day->update_row('subject_allocation_id')
                         ) {
                             // If can't update_row the data, throw an error message
@@ -244,7 +252,7 @@ class Time_day_api extends Time_day
             $this->Time_day->time = $data[$count]->time;
             $this->Time_day->subject_allocation_id = $data[$count]->subject_allocation_id;
 
-            if ($data[$count]->time_day_id === 0) {
+            if ($data[$count]->time_day_id == 0) {
                 // Check for collision
                 if ($this->collosion($data[$count]->subject_allocation_id, $data[$count]->day - 1, $data[$count]->time)) {
                     // If no collision
