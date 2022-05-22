@@ -166,7 +166,7 @@ const clear_item = async (e, element) => {
   e.currentTarget.options[0].innerHTML = "Sub-code";
   element.value = "";
 
-  console.log(element);
+  // console.log(element);
 
   // recall the subject filler
   await clear_subjects().then(() => {
@@ -245,7 +245,7 @@ function fill_faculty(e) {
       element.setAttributeNode(tdid);
     }
 
-    console.log(element);
+    // console.log(element);
 
     element.value = faculty;
 
@@ -271,11 +271,11 @@ function submit_form(e) {
     time = (time + 1) % 8 == 0 ? 8 : (time + 1) % 8;
     day = time == 1 ? day + 1 : day;
 
-    console.table("day", day, "time", time);
-    console.log("item", item);
-    console.log("sibling", item.nextElementSibling);
-    console.log("sibling sid", item.nextElementSibling.dataset.sid);
-    console.log("sibling sid", item.nextElementSibling.dataset.tdid);
+    // console.table("day", day, "time", time);
+    // console.log("item", item);
+    // console.log("sibling", item.nextElementSibling);
+    // console.log("sibling sid", item.nextElementSibling.dataset.sid);
+    // console.log("sibling sid", item.nextElementSibling.dataset.tdid);
 
     // push the allocated periods
     if (item.nextElementSibling.dataset.sid) {
@@ -288,7 +288,7 @@ function submit_form(e) {
     }
   });
 
-  console.log(time_day);
+  // console.log(time_day);
 
   // submit
   const timetable = get_timetable();
@@ -307,7 +307,7 @@ function submit_form(e) {
       if (got.error) {
         alert(got.error);
       } else {
-        console.log("allocated");
+        // console.log("allocated");
         window.localStorage.removeItem("timetable");
         window.localStorage.removeItem("subject_allocation_2");
 
