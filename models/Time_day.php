@@ -29,7 +29,7 @@ class Time_day
     {
         $columns = $this->table . '.time_day_id, ' . $this->table . '.timetable_id, '
             . $this->table . '.day, ' . $this->table . '.time, ' . $this->table . '.subject_allocation_id, '
-            . $this->subject_allocations . '.subject_id, ' . $this->subjects . '.subject, '
+            . $this->subject_allocations . '.subject_id, ' . $this->subjects . '.subject, ' . $this->subjects . '.subject_code, '
             . $this->subject_allocations . '.faculty_id, ' . $this->faculties . '.faculty';
         $query = 'SELECT ' . $columns . ' FROM (((' . $this->table . ' INNER JOIN ' . $this->subject_allocations . ' ON '
             . $this->table . '.subject_allocation_id = ' . $this->subject_allocations . '.subject_allocation_id) INNER JOIN '
@@ -52,7 +52,7 @@ class Time_day
     {
         $columns = $this->table . '.time_day_id, ' . $this->table . '.timetable_id, '
             . $this->table . '.day, ' . $this->table . '.time, ' . $this->table . '.subject_allocation_id, '
-            . $this->subject_allocations . '.subject_id, ' . $this->subjects . '.subject, '
+            . $this->subject_allocations . '.subject_id, ' . $this->subjects . '.subject, ' . $this->subjects . '.subject_code, '
             . $this->subject_allocations . '.faculty_id, ' . $this->faculties . '.faculty';
         $query = 'SELECT ' . $columns . ' FROM (((' . $this->table . ' INNER JOIN ' . $this->subject_allocations . ' ON '
             . $this->table . '.timetable_id = :timetable_id AND '
@@ -80,31 +80,26 @@ class Time_day
     public function read_single()
     {
         $columns = $this->table . '.time_day_id, ' . $this->table . '.timetable_id, '
-            . $this->table . '.day, ' . $this->table . '.time, ' . $this->table . '.subject_allocation_id, '
-            . $this->subject_allocations . '.faculty_id, ' . $this->faculties . '.faculty';
-        $query = 'SELECT ' . $columns . ' FROM ((' . $this->table . ' INNER JOIN ' . $this->subject_allocations . ' ON '
+            . $this->table . '.day, ' . $this->table . '.time, ' . $this->table . '.subject_allocation_id';
+        $query = 'SELECT ' . $columns . ' FROM ' . $this->table . ' WHERE '
             . $this->table . '.day = :day AND '
-            . $this->table . '.time = :time )  INNER JOIN ' . $this->faculties . ' ON '
-            . $this->subject_allocations . '.faculty_id = :faculty_id)';
+            . $this->table . '.time = :time';
 
         $stmt = $this->conn->prepare($query);
 
         // clean the data
         $this->day = htmlspecialchars(strip_tags($this->day));
         $this->time = htmlspecialchars(strip_tags($this->time));
-        $this->faculty_id = htmlspecialchars(strip_tags($this->faculty_id));
 
         $stmt->bindParam(':day', $this->day);
         $stmt->bindParam(':time', $this->time);
-        $stmt->bindParam(':faculty_id', $this->faculty_id);
 
         if ($stmt->execute()) {
             // Fetch the data
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // If data exists, return the data
-            if ($row) {
-                return $row;
+            if ($stmt) {
+                return $stmt;
             }
         }
 
