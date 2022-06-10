@@ -1,5 +1,58 @@
 const subjects = document.querySelectorAll(".subjects");
 const submit = document.getElementById("submit");
+const generate_pdf = document.getElementById("generate_pdf");
+const error_msg = document.getElementById("error_msg");
+const home = document.getElementById("home");
+
+// fill data available from DB
+const fill_time_day = (time_day) => {
+  return new Promise(async (resolve, reject) => {
+    // console.log(time_day);
+    let sub_alloc = get_subject_allocation();
+    time_day.forEach((item, index, array) => {
+      // get the correct position in time table
+      const e = subjects[(item.day - 1) * 8 + (item.time - 1)];
+      const element = e.nextElementSibling;
+
+      // -1 contact periods
+      sub_alloc = modify_subject_allocation(
+        sub_alloc,
+        item.subject_allocation_id,
+        -1
+      );
+      // set the modified subject_allocation array
+      window.localStorage.setItem(
+        "subject_allocation_2",
+        JSON.stringify(sub_alloc)
+      );
+
+      // set all the required IDs
+      let sid = document.createAttribute("data-sid");
+      sid.value = item.subject_allocation_id;
+      element.setAttributeNode(sid);
+
+      let scode = document.createAttribute("data-scode");
+      scode.value = item.subject_code;
+      element.setAttributeNode(scode);
+
+      let tdid = document.createAttribute("data-tdid");
+      tdid.value = item.time_day_id;
+      element.setAttributeNode(tdid);
+
+      element.value = item.faculty;
+      e.options[0].innerHTML = item.subject_code;
+
+      if (index + 1 == array.length) {
+        resolve();
+      }
+    });
+
+    // recall the subject filler
+    await clear_subjects().then(() => {
+      fill_subjects();
+    });
+  });
+};
 
 // get timetable from local storage
 const get_timetable = () => {
@@ -36,6 +89,9 @@ function set_subject_allocation() {
         if (got.error) {
           reject(alert(got.error));
         } else {
+          got.forEach(
+            (item) => (item.contact_periods = Number(item.contact_periods))
+          );
           window.localStorage.setItem(
             "subject_allocation_2",
             JSON.stringify(got)
@@ -137,6 +193,13 @@ async function initialize() {
 window.addEventListener("DOMContentLoaded", initialize);
 // submit form
 submit.addEventListener("click", submit_form);
+/// return to home page
+home.addEventListener("click", () => {
+  window.localStorage.removeItem("timetable");
+  window.localStorage.removeItem("subject_allocation");
+  window.localStorage.removeItem("subject_allocation_2");
+  window.location.replace("./homepage.html");
+});
 
 // ------------------------------------- modify/change subject allocation ------------------------------------- //
 
@@ -305,13 +368,16 @@ function submit_form(e) {
       const got = JSON.parse(xhr.responseText);
 
       if (got.error) {
-        alert(got.error);
+        // alert(got.error);
+        error_msg.innerHTML = got.error;
       } else {
+        window.alert("updated successfully");
+        error_msg.innerHTML = "";
         // console.log("allocated");
-        window.localStorage.removeItem("timetable");
-        window.localStorage.removeItem("subject_allocation_2");
+        // window.localStorage.removeItem("timetable");
+        // window.localStorage.removeItem("subject_allocation_2");
 
-        window.location.replace("./homepage.html");
+        // window.location.replace("./homepage.html");
       }
     }
   };
@@ -320,56 +386,6 @@ function submit_form(e) {
 }
 
 // ------------------------------------------- Get data from DB ------------------------------------------- //
-
-// fill data available from DB
-const fill_time_day = (time_day) => {
-  return new Promise(async (resolve, reject) => {
-    // console.log(time_day);
-    let sub_alloc = get_subject_allocation();
-    time_day.forEach((item, index, array) => {
-      // get the correct position in time table
-      const e = subjects[(item.day - 1) * 8 + (item.time - 1)];
-      const element = e.nextElementSibling;
-
-      // -1 contact periods
-      sub_alloc = modify_subject_allocation(
-        sub_alloc,
-        item.subject_allocation_id,
-        -1
-      );
-      // set the modified subject_allocation array
-      window.localStorage.setItem(
-        "subject_allocation_2",
-        JSON.stringify(sub_alloc)
-      );
-
-      // set all the required IDs
-      let sid = document.createAttribute("data-sid");
-      sid.value = item.subject_allocation_id;
-      element.setAttributeNode(sid);
-
-      let scode = document.createAttribute("data-scode");
-      scode.value = item.subject_code;
-      element.setAttributeNode(scode);
-
-      let tdid = document.createAttribute("data-tdid");
-      tdid.value = item.time_day_id;
-      element.setAttributeNode(tdid);
-
-      element.value = item.faculty;
-      e.options[0].innerHTML = item.subject_code;
-
-      if (index + 1 == array.length) {
-        resolve();
-      }
-    });
-
-    // recall the subject filler
-    await clear_subjects().then(() => {
-      fill_subjects();
-    });
-  });
-};
 
 // get db
 function db_data() {

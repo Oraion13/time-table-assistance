@@ -293,11 +293,11 @@ async function setup_subject_faculty() {
   // await setup_subject();
   await setup_departments();
   // setup_faculty();
-  if (get_local_storage().length !== 0) {
-    setup_items();
-  } else {
-    await db_data();
-  }
+  // if (get_local_storage().length !== 0) {
+  //   setup_items();
+  // } else {
+  await db_data();
+  // }
 }
 
 // setup subject list and faculty list
@@ -343,7 +343,7 @@ function clear_items(e) {
 
   return new Promise((resolve, reject) => {
     // confirm clear
-    if(!window.confirm("Are you sure to clear all?")){
+    if (!window.confirm("Are you sure to clear all?")) {
       return;
     }
 
@@ -803,13 +803,16 @@ const get_data = (got) => {
         });
 
         if (index + 1 === array.length) {
-          // allocate to local storage
-          resolve(
+          if (items.length != array.length) {
+            get_data(got);
+          } else {
+            // allocate to local storage
             window.localStorage.setItem(
               "subject_allocation",
               JSON.stringify(items)
-            )
-          );
+            );
+            resolve(setup_items());
+          }
         }
       });
     }
@@ -829,7 +832,7 @@ const db_data = () => {
       true
     );
 
-    xhr.onreadystatechange = function () {
+    xhr.onreadystatechange = async function () {
       if (xhr.readyState == XMLHttpRequest.DONE) {
         const got = JSON.parse(xhr.responseText);
 
@@ -838,9 +841,8 @@ const db_data = () => {
           reject(display_alert(got.error, "danger"));
         } else {
           // assign the data
-          get_data(got).then(() => {
-            resolve(setup_items());
-          });
+          console.log(got);
+          await get_data(got);
         }
       }
     };

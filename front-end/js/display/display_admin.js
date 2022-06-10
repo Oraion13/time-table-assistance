@@ -91,6 +91,19 @@ function setup_timetable(e) {
   });
 }
 
+// delete an item
+function delete_item(e) {
+  const element = e.currentTarget.parentElement.parentElement;
+  const id = element.dataset.id;
+
+  allocated.removeChild(element);
+  display_alert("item removed", "danger");
+
+  set_back_to_default();
+  // remove from local storage
+  remove_from_local_storage(id);
+}
+
 const fill_timetable = (arr) => {
   timetables.innerHTML = "";
   arr.forEach((item) => {
@@ -110,10 +123,16 @@ const fill_timetable = (arr) => {
     element.innerHTML = `${item.academic_year_from} - ${item.academic_year_to}, ${item.department}
     <button type="button" class="edit-btn btn btn-warning">
                 <i class="fas fa-edit"></i>
-    </button>`;
+                </button>
+     <button type="button" class="delete-btn btn btn-danger">
+                <i class="fas fa-trash"></i>
+              </button>`;
 
     const editBtn = element.querySelector(".edit-btn");
     editBtn.addEventListener("click", edit_item);
+
+    const deleteBtn = element.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", delete_item);
 
     timetables.appendChild(element);
   });

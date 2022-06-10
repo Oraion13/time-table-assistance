@@ -106,13 +106,18 @@ class Time_day_api extends Time_day
             array_push($faculty_ids, $faculty['faculty_id']);
         }
 
+        
         if (in_array($faculty_id['faculty_id'], $faculty_ids)) {
-            send(400, "error", $faculty['faculty'] . ' already had a period at '
-                . $days[$day] . ': ' . $this->ordinal_suffix_of($time) . ' hour');
-            die();
+            // send(400, "error", $faculty['faculty'] . ' already had a period at '
+            //     . $days[$day] . ': ' . $this->ordinal_suffix_of($time) . ' hour');
+            // die();
+            return  ' <i class="fa-solid fa-triangle-exclamation"></i> Warning: ' . $faculty['faculty'] . ' already had a period at '
+                . $days[$day] . ': ' . $this->ordinal_suffix_of($time) . ' hour<br>';
         }
 
-        return true;
+        return "";
+
+        // return true;
     }
 
     // POST a new period
@@ -194,6 +199,7 @@ class Time_day_api extends Time_day
 
         // Update the data which is available
         $count = 0;
+        $message = "";
         while ($count < count($data)) {
             // Clean the data
             foreach ($DB_data as $key => $element) {
@@ -204,36 +210,47 @@ class Time_day_api extends Time_day
                     $this->Time_day->subject_allocation_id = $data[$count]->subject_allocation_id;
 
                     if (strcmp($element['day'], $data[$count]->day) !== 0) {
-                        if (
-                            $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day, $data[$count]->time)
-                            && !$this->Time_day->update_row('day')
-                        ) {
+                        // if (
+                            if($message .= $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day, $data[$count]->time)){
+                                
+                            }else{
+                                $this->Time_day->update_row('day');
+                            }
+                        // ) {
                             // If can't update_row the data, throw an error message
-                            send(400, 'error', 'day' . ' cannot be updated');
-                            die();
-                        }
+                            // send(400, 'error', 'day' . ' cannot be updated');
+                            // die();
+                        // }
                     }
 
                     if (strcmp($element['time'], $data[$count]->time) !== 0) {
-                        if (
-                            $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day, $data[$count]->time)
-                            && !$this->Time_day->update_row('time')
-                        ) {
+                        // if (
+                            if($message .= $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day, $data[$count]->time)){
+
+                            }else{
+                                $this->Time_day->update_row('time');
+                            }
+                            
+                        // ) {
                             // If can't update_row the data, throw an error message
-                            send(400, 'error', 'time' . ' cannot be updated');
-                            die();
-                        }
+                            // send(400, 'error', 'time' . ' cannot be updated');
+                            // die();
+                        // }
                     }
 
                     if (strcmp($element['subject_allocation_id'], $data[$count]->subject_allocation_id) !== 0) {
-                        if (
-                            $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day, $data[$count]->time)
-                            && !$this->Time_day->update_row('subject_allocation_id')
-                        ) {
+                        // if (
+                            if($message .= $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day, $data[$count]->time)){
+
+                            }else{
+                                $this->Time_day->update_row('subject_allocation_id');
+                            }
+                            
+                        // ) {
                             // If can't update_row the data, throw an error message
-                            send(400, 'error', 'subject_allocation_id' . ' cannot be updated');
-                            die();
-                        }
+                            // send(400, 'error', 'subject_allocation_id' . ' cannot be updated');
+                            // die();
+                        // }
                     }
                     break;
                 }
@@ -254,14 +271,25 @@ class Time_day_api extends Time_day
 
             if ($data[$count]->time_day_id == 0) {
                 // Check for collision
-                if ($this->collosion($data[$count]->subject_allocation_id, $data[$count]->day - 1, $data[$count]->time)) {
-                    // If no collision
-                    $this->post();
+                // if (
+                    if($message .= $this->collosion($data[$count]->subject_allocation_id, $data[$count]->day - 1, $data[$count]->time)){
+
+                    }else{
+                       // If no collision
+                    $this->post(); 
+                    }
+                    // ) {
+                    
                     array_splice($data, $count, 1);
                     continue;
                 }
-            }
+            // }
             ++$count;
+        }
+
+        if($message){
+            send(400, 'error', $message);
+            die();
         }
 
         $this->get_by_id($id);
