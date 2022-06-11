@@ -3,6 +3,7 @@ const submit = document.getElementById("submit");
 const generate_pdf = document.getElementById("generate_pdf");
 const error_msg = document.getElementById("error_msg");
 const home = document.getElementById("home");
+const this_timetable = document.getElementById("this_timetable");
 
 // fill data available from DB
 const fill_time_day = (time_day) => {
@@ -200,6 +201,20 @@ home.addEventListener("click", () => {
   window.localStorage.removeItem("subject_allocation_2");
   window.location.replace("./homepage.html");
 });
+// redirect to generate pdf
+generate_pdf.addEventListener("click", () => {
+  const doc = new jsPDF({orientation: "landscape"});
+  var opt = {
+    margin:       1,
+    filename:     'myfile.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+  };
+  // window.location.replace("./generatepdf.html");
+  doc.autoTable({ html: '#this_timetable' })
+  doc.save('table.pdf')
+})
 
 // ------------------------------------- modify/change subject allocation ------------------------------------- //
 
@@ -374,10 +389,14 @@ function submit_form(e) {
         window.alert("updated successfully");
         error_msg.innerHTML = "";
         // console.log("allocated");
-        // window.localStorage.removeItem("timetable");
-        // window.localStorage.removeItem("subject_allocation_2");
+        if(!window.confirm("Redirect to homepage?")){
+          return;
+        }
 
-        // window.location.replace("./homepage.html");
+        window.localStorage.removeItem("timetable");
+        window.localStorage.removeItem("subject_allocation_2");
+
+        window.location.replace("./homepage.html");
       }
     }
   };
