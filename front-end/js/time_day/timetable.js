@@ -203,18 +203,8 @@ home.addEventListener("click", () => {
 });
 // redirect to generate pdf
 generate_pdf.addEventListener("click", () => {
-  const doc = new jsPDF({orientation: "landscape"});
-  var opt = {
-    margin:       1,
-    filename:     'myfile.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2 },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
-  };
-  // window.location.replace("./generatepdf.html");
-  doc.autoTable({ html: '#this_timetable' })
-  doc.save('table.pdf')
-})
+  window.location.replace("./generatepdf.html");
+});
 
 // ------------------------------------- modify/change subject allocation ------------------------------------- //
 
@@ -389,7 +379,7 @@ function submit_form(e) {
         window.alert("updated successfully");
         error_msg.innerHTML = "";
         // console.log("allocated");
-        if(!window.confirm("Redirect to homepage?")){
+        if (!window.confirm("Redirect to homepage?")) {
           return;
         }
 
