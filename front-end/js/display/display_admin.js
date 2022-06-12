@@ -49,17 +49,14 @@ function setup_timetable(e) {
     const xhr = new XMLHttpRequest();
 
     if (isNaN(Number(departments.value)) && isNaN(Number(semester.value))) {
-      console.log("dep sem");
       xhr.open("GET", "../../../api/timetable/timetable.php", true);
     } else if (isNaN(Number(departments.value))) {
-      console.log("sem", semester.value);
       xhr.open(
         "GET",
         `../../../api/timetable/timetable.php?sem=${semester.value}`,
         true
       );
     } else if (isNaN(Number(semester.value))) {
-      console.log("dept", departments.value);
 
       xhr.open(
         "GET",
@@ -67,7 +64,6 @@ function setup_timetable(e) {
         true
       );
     } else {
-      console.log("all", semester.value, departments.value);
 
       xhr.open(
         "GET",
@@ -91,6 +87,40 @@ function setup_timetable(e) {
   });
 }
 
+const remove_from_db = (id) => {
+  const xhr = new XMLHttpRequest();
+
+  xhr.open("DELETE", `../../../api/timetable/timetable.php?ID=${id}`, true);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      const got = JSON.parse(xhr.responseText);
+  
+      if (got.error) {
+        window.alert(got.error);
+      } else {
+        window.alert("Time table deleted successfully");
+      }
+    }
+  };
+  xhr.send();
+};
+
+// delete an item
+function delete_item(e) {
+  const element = e.currentTarget.parentElement;
+  const id = element.dataset.id;
+
+  if (!window.confirm("Are you sure to delete this time table?")) {
+    return;
+  }
+
+  timetables.removeChild(element);
+
+  // remove from local db
+  remove_from_db(id);
+}
+
 const fill_timetable = (arr) => {
   timetables.innerHTML = "";
   arr.forEach((item) => {
@@ -107,13 +137,20 @@ const fill_timetable = (arr) => {
 
     element.setAttributeNode(attr);
 
-    element.innerHTML = `${item.academic_year_from} - ${item.academic_year_to}, ${item.department}
+    element.innerHTML = `${item.academic_year_from} - ${item.academic_year_to}, ${item.department} - semester
+    - ${item.semester}
     <button type="button" class="edit-btn btn btn-warning">
                 <i class="fas fa-edit"></i>
-    </button>`;
+                </button>
+     <button type="button" class="delete-btn btn btn-danger">
+                <i class="fas fa-trash"></i>
+              </button>`;
 
     const editBtn = element.querySelector(".edit-btn");
     editBtn.addEventListener("click", edit_item);
+
+    const deleteBtn = element.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", delete_item);
 
     timetables.appendChild(element);
   });
