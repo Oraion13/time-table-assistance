@@ -186,6 +186,7 @@ const append_subject = (id, code, value) => {
 
 // initially
 async function initialize() {
+  await clear_subjects();
   await set_subject_allocation();
   await db_data();
 }
