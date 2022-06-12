@@ -24,7 +24,7 @@ class Faculty_table
     public function read()
     {
         $columns = $this->faculties . '.faculty, ' . $this->departments . '.department, ' . $this->subjects . '.subject, '
-            . $this->subjects . '.contact_periods, '
+            . $this->subjects . '.contact_periods, ' . $this->subjects . '.subject_code, '
             . $this->timetables . '.timetable_id, ' . $this->timetables . '.academic_year_from, '
             . $this->timetables . '.academic_year_to, ' . $this->timetables . '.semester, '
             . $this->subject_allocations . '.subject_allocation_id, ' . $this->time_day . '.time_day_id, '
