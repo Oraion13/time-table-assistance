@@ -50,11 +50,7 @@ class Time_day
     // Read all data of a time table by ID
     public function read_row()
     {
-        $columns = $this->table . '.time_day_id, ' . $this->table . '.timetable_id, '
-            . $this->table . '.day, ' . $this->table . '.time, ' . $this->table . '.subject_allocation_id, '
-            . $this->subject_allocations . '.subject_id, ' . $this->subjects . '.subject, ' . $this->subjects . '.subject_code, '
-            . $this->subject_allocations . '.faculty_id, ' . $this->faculties . '.faculty';
-        $query = 'SELECT ' . $columns . ' FROM (((' . $this->table . ' INNER JOIN ' . $this->subject_allocations . ' ON '
+        $query = 'SELECT * FROM (((' . $this->table . ' INNER JOIN ' . $this->subject_allocations . ' ON '
             . $this->table . '.timetable_id = :timetable_id AND '
             . $this->table . '.subject_allocation_id = ' . $this->subject_allocations . '.subject_allocation_id) INNER JOIN '
             . $this->subjects . ' ON ' . $this->subject_allocations . '.subject_id = '
@@ -79,9 +75,7 @@ class Time_day
     // read a particular entry to check for collision
     public function read_single()
     {
-        $columns = $this->table . '.time_day_id, ' . $this->table . '.timetable_id, '
-            . $this->table . '.day, ' . $this->table . '.time, ' . $this->table . '.subject_allocation_id';
-        $query = 'SELECT ' . $columns . ' FROM ' . $this->table . ' WHERE '
+        $query = 'SELECT * FROM ' . $this->table . ' WHERE '
             . $this->table . '.day = :day AND '
             . $this->table . '.time = :time';
 
