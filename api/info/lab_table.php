@@ -27,9 +27,10 @@ class Lab_table_api extends Lab_table
     }
 
     // Get all data
-    public function get($id)
+    public function get($id, $id1)
     {
         $this->Lab->department_id = $id;
+        $this->Lab->category_id = $id1;
         // Get the subjects from DB
         $all_data = $this->Lab->read();
 
@@ -50,9 +51,9 @@ class Lab_table_api extends Lab_table
 // GET all the info
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $Lab_table_api = new Lab_table_api();
-    if (isset($_GET['dept'])) {
-        $Lab_table_api->get($_GET['dept']);
+    if (isset($_GET['dept']) && isset($_GET['cat'])) {
+        $Lab_table_api->get($_GET['dept'], $_GET['cat']);
     }else{
-        send(400, 'error', 'provide a dept ID');
+        send(400, 'error', 'provide a department and category ID');
     }
 }

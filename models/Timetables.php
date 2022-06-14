@@ -15,6 +15,12 @@ class Timetables
     public $academic_year_to = "";
     public $department_id = 0;
     public $semester = 0;
+    public $regulation = 0;
+    public $room_no = 0;
+    public $period = 0;
+    public $with_effect_from = 0;
+    public $class_advisor = 0;
+    public $class_committee_chairperson = 0;
 
     // Connect to the DB
     public function __construct($db)
@@ -25,10 +31,7 @@ class Timetables
     // Read all data
     public function read()
     {
-        $columns = $this->table . '.timetable_id, ' . $this->table . '.academic_year_from, '
-            . $this->table . '.academic_year_to, ' . $this->table . '.department_id, '
-            . $this->departments . '.department, ' . $this->table . '.semester';
-        $query = 'SELECT ' . $columns . ' FROM (' . $this->table . ' INNER JOIN ' . $this->departments
+        $query = 'SELECT * FROM (' . $this->table . ' INNER JOIN ' . $this->departments
             . ' ON ' . $this->table . '.department_id = ' . $this->departments . '.department_id)';
 
         $stmt = $this->conn->prepare($query);
@@ -78,10 +81,7 @@ class Timetables
     // read a particular entry
     public function read_by_dept_sem()
     {
-        $columns = $this->table . '.timetable_id, ' . $this->table . '.academic_year_from, '
-            . $this->table . '.academic_year_to, ' . $this->table . '.department_id, '
-            . $this->departments . '.department, ' . $this->table . '.semester';
-        $query = 'SELECT ' . $columns . ' FROM (' . $this->table . ' INNER JOIN ' . $this->departments
+        $query = 'SELECT * FROM (' . $this->table . ' INNER JOIN ' . $this->departments
             . ' ON ' . $this->table . '.department_id = :department_id AND '
             . $this->table . '.semester = :semester AND  '
             . $this->table . '.department_id = '
@@ -106,10 +106,7 @@ class Timetables
     // read a particular entry
     public function read_by_dept()
     {
-        $columns = $this->table . '.timetable_id, ' . $this->table . '.academic_year_from, '
-            . $this->table . '.academic_year_to, ' . $this->table . '.department_id, '
-            . $this->departments . '.department, ' . $this->table . '.semester';
-        $query = 'SELECT ' . $columns . ' FROM (' . $this->table . ' INNER JOIN ' . $this->departments
+        $query = 'SELECT * FROM (' . $this->table . ' INNER JOIN ' . $this->departments
             . ' ON ' . $this->table . '.department_id = :department_id AND '
             . $this->table . '.department_id = '
             . $this->departments . '.department_id)';
@@ -131,10 +128,7 @@ class Timetables
     // read a particular entry
     public function read_by_sem()
     {
-        $columns = $this->table . '.timetable_id, ' . $this->table . '.academic_year_from, '
-            . $this->table . '.academic_year_to, ' . $this->table . '.department_id, '
-            . $this->departments . '.department, ' . $this->table . '.semester';
-        $query = 'SELECT ' . $columns . ' FROM (' . $this->table . ' INNER JOIN ' . $this->departments
+        $query = 'SELECT * FROM (' . $this->table . ' INNER JOIN ' . $this->departments
             . ' ON '
             . $this->table . '.semester = :semester AND  '
             . $this->table . '.department_id = '
@@ -157,10 +151,7 @@ class Timetables
     // Read data by ID
     public function read_row()
     {
-        $columns = $this->table . '.timetable_id, ' . $this->table . '.academic_year_from, '
-            . $this->table . '.academic_year_to, ' . $this->table . '.department_id, '
-            . $this->departments . '.department, ' . $this->table . '.semester';
-        $query = 'SELECT ' . $columns . ' FROM (' . $this->table . ' INNER JOIN ' . $this->departments
+        $query = 'SELECT * FROM (' . $this->table . ' INNER JOIN ' . $this->departments
             . ' ON timetable_id = :timetable_id AND ' . $this->table . '.department_id = '
             . $this->departments . '.department_id)';
 
@@ -188,7 +179,8 @@ class Timetables
     public function post()
     {
         $query = 'INSERT INTO ' . $this->table . ' SET academic_year_from = :academic_year_from,'
-            . ' academic_year_to = :academic_year_to, department_id = :department_id, semester = :semester';
+            . ' academic_year_to = :academic_year_to, department_id = :department_id, semester = :semester, '
+            . 'regulation = :regulation, room_no = :room_no, period = :period, with_effect_from = :with_effect_from, class_advisor = :class_advisor, class_committee_chairperson = :class_committee_chairperson, ';
 
         $stmt = $this->conn->prepare($query);
 
@@ -197,11 +189,23 @@ class Timetables
         $this->academic_year_to = htmlspecialchars(strip_tags($this->academic_year_to));
         $this->department_id = htmlspecialchars(strip_tags($this->department_id));
         $this->semester = htmlspecialchars(strip_tags($this->semester));
+        $this->regulation = htmlspecialchars(strip_tags($this->regulation));
+        $this->room_no = htmlspecialchars(strip_tags($this->room_no));
+        $this->period = htmlspecialchars(strip_tags($this->period));
+        $this->with_effect_from = htmlspecialchars(strip_tags($this->with_effect_from));
+        $this->class_advisor = htmlspecialchars(strip_tags($this->class_advisor));
+        $this->class_committee_chairperson = htmlspecialchars(strip_tags($this->class_committee_chairperson));
 
         $stmt->bindParam(':academic_year_from', $this->academic_year_from);
         $stmt->bindParam(':academic_year_to', $this->academic_year_to);
         $stmt->bindParam(':department_id', $this->department_id);
         $stmt->bindParam(':semester', $this->semester);
+        $stmt->bindParam(':regulation', $this->regulation);
+        $stmt->bindParam(':room_no', $this->room_no);
+        $stmt->bindParam(':period', $this->period);
+        $stmt->bindParam(':with_effect_from', $this->with_effect_from);
+        $stmt->bindParam(':class_advisor', $this->class_advisor);
+        $stmt->bindParam(':class_committee_chairperson', $this->class_committee_chairperson);
 
         // If data inserted successfully, return True
         if ($stmt->execute()) {

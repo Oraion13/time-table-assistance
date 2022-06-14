@@ -16,7 +16,7 @@ const fill_time_day = (time_day) => {
   return new Promise(async (resolve, reject) => {
     time_day.forEach((item, index, array) => {
       // allocate subjects array
-      alloc_subjects.find((obj) => obj.course_code == item.course_code)
+      alloc_subjects.find((obj) => obj.subject_code == item.subject_code)
         ? alloc_subjects
         : alloc_subjects.push(item);
       // get the correct position in time table

@@ -128,6 +128,12 @@ class Timetable_api extends Timetables
         $this->Timetable->academic_year_to = $data->academic_year_to;
         $this->Timetable->department_id = $data->department_id;
         $this->Timetable->semester = $data->semester;
+        $this->Timetable->regulation = $data->regulation;
+        $this->Timetable->room_no = $data->room_no;
+        $this->Timetable->period = $data->period;
+        $this->Timetable->with_effect_from = $data->with_effect_from;
+        $this->Timetable->class_advisor = $data->class_advisor;
+        $this->Timetable->class_committee_chairperson = $data->class_committee_chairperson;
 
         // Get the time table from DB
         $all_data = $this->Timetable->read_single();
@@ -140,11 +146,7 @@ class Timetable_api extends Timetables
 
                 echo json_encode(
                     array(
-                        'timetable_id' => $row['timetable_id'],
-                        'academic_year_from' => $row['academic_year_from'],
-                        'academic_year_to' => $row['academic_year_to'],
-                        'department_id' => $row['department_id'],
-                        'semester' => $row['semester']
+                        $row
                     )
                 );
             } else {
@@ -184,6 +186,12 @@ class Timetable_api extends Timetables
         $this->Timetable->academic_year_from = $data->academic_year_from;
         $this->Timetable->department_id = $data->department_id;
         $this->Timetable->semester = $data->semester;
+        $this->Timetable->regulation = $data->regulation;
+        $this->Timetable->room_no = $data->room_no;
+        $this->Timetable->period = $data->period;
+        $this->Timetable->with_effect_from = $data->with_effect_from;
+        $this->Timetable->class_advisor = $data->class_advisor;
+        $this->Timetable->class_committee_chairperson = $data->class_committee_chairperson;
 
         // Get the time table from DB
         $all_data = $this->Timetable->read_row();
@@ -194,6 +202,12 @@ class Timetable_api extends Timetables
             $this->update_by_id($all_data['academic_year_from'], $data->academic_year_from, 'academic_year_from');
             $this->update_by_id($all_data['department_id'], $data->department_id, 'department_id');
             $this->update_by_id($all_data['semester'], $data->semester, 'semester');
+            $this->update_by_id($all_data['regulation'], $data->regulation, 'regulation');
+            $this->update_by_id($all_data['room_no'], $data->room_no, 'room_no');
+            $this->update_by_id($all_data['period'], $data->period, 'period');
+            $this->update_by_id($all_data['with_effect_from'], $data->with_effect_from, 'with_effect_from');
+            $this->update_by_id($all_data['class_advisor'], $data->class_advisor, 'class_advisor');
+            $this->update_by_id($all_data['class_committee_chairperson'], $data->class_committee_chairperson, 'class_committee_chairperson');
 
             // If updated successfully, get_by_id the data, else throw an error message 
             $this->get_by_id($_GET['ID']);
