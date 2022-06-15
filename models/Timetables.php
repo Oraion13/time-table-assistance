@@ -178,9 +178,9 @@ class Timetables
     // Insert data
     public function post()
     {
-        $query = 'INSERT INTO ' . $this->table . ' SET academic_year_from = :academic_year_from,'
-            . ' academic_year_to = :academic_year_to, department_id = :department_id, semester = :semester, '
-            . 'regulation = :regulation, room_no = :room_no, period = :period, with_effect_from = :with_effect_from, class_advisor = :class_advisor, class_committee_chairperson = :class_committee_chairperson, ';
+        $query = 'INSERT INTO ' . $this->table . ' SET academic_year_from = :academic_year_from, '
+            . 'academic_year_to = :academic_year_to, department_id = :department_id, semester = :semester, '
+            . 'regulation = :regulation, room_no = :room_no, period = :period, with_effect_from = :with_effect_from, class_advisor = :class_advisor, class_committee_chairperson = :class_committee_chairperson';
 
         $stmt = $this->conn->prepare($query);
 

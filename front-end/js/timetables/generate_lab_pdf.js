@@ -72,8 +72,8 @@ function db_data() {
         } else {
           got.forEach((item, index, array) => {
             if (
-              item.subject.includes("Laboratory") ||
-              item.subject.includes("Project")
+              item.subject.toLowerCase().includes("laboratory") ||
+              item.subject.toLowerCase().includes("project")
             ) {
               labs.push(item);
             }
