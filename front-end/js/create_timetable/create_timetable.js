@@ -179,6 +179,8 @@ function create_timetable(e) {
     class_committee_chairperson: class_committee_chairperson.value,
   };
 
+  console.log('TIME', timetable);
+
   const xhr = new XMLHttpRequest();
 
   xhr.open("POST", "../../../api/timetable/timetable.php", true);

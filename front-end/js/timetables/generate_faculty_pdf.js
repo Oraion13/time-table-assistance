@@ -80,7 +80,7 @@ function setup_footer(got) {
                 <th>Course Code</th>
                 <th>Course Title</th>
                 <th>Contact Periods</th>
-                <th>Name of the Faculty Member</th>`;
+                <th>Semester and department</th>`;
   got.forEach((item, index) => {
     const element = document.createElement("tr");
     element.innerHTML = `
