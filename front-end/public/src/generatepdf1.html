@@ -48,7 +48,7 @@
       <!-- <a href="#" class="btn btn-white"><i class="fa-solid fa-house"></i> Home</a> -->
       <h4>TimeTable Assistant</h4>
       <div class="d-grid gap-2 d-md-flex justify-content-end">
-        <a href="./timetables/displaylabtimetable.html" class="btn btn-white"
+        <a href="./timetables/displaytimetable.html" class="btn btn-white"
           ><i class="fa-solid fa-arrow-left"></i> Back</a
         >
         <a href="./index.html" id="home" class="btn btn-white"
@@ -75,15 +75,31 @@
                   </th>
                 </tr>
                 <tr style="text-align: center">
-                  <th colspan="4">LAB TIMETABLE</th>
+                  <th colspan="6">TIMETABLE</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <th>Academic Year:</th>
+                  <td>Programme & Branch: </td>
+                  <th id="department1"></th>
+                  <td>Academic Year:</td>
                   <th id="academic_year"></th>
-                  <th>Semester Period: </th>
-                  <th><span id="semester_period"></span></th>
+                  <td>Semester: <span id="semester"></span></td>
+                  <td>Regulation: <span id="regulation"></span></td>
+                </tr>
+                <tr>
+                  <td>Room No:</td>
+                  <th id="room_no"></th>
+                  <td>Period:</td>
+                  <th id="period"></th>
+                  <td>With effect from:</td>
+                  <th id="with_effect_from"></th>
+                </tr>
+                <tr>
+                  <th>Class Advisor:</th>
+                  <th colspan="2" id="faculty_name">2021 - 2022</th>
+                  <th>Class Commmittee Chairperson:</th>
+                  <th colspan="2" id="class_committee_chairperson"></tr>
                 </tr>
               </tbody>
             </table>
@@ -596,7 +612,7 @@
                 <th>Course Code</th>
                 <th>Course Title</th>
                 <th>Contact Periods</th>
-                <th>Class</th>
+                <th>Name of the Faculty Member</th>
               </tr>
             </tbody>
           </table>
@@ -606,6 +622,8 @@
             <tbody>
               <tr>
                 <th>TimeTable Co-ordinator</th>
+                <th>Class Advisor</th>
+                <th>Class Committee Chairperson</th>
                 <th>HOD</th>
                 <th>Dean</th>
                 
@@ -620,5 +638,5 @@
       </div>
     </div>
   </body>
-  <script src="../../js/timetables/generate_lab_pdf.js"></script>
+  <script src="../../js/time_day/generate_timetable.js"></script>
 </html>

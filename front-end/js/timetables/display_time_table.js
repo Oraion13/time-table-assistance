@@ -134,7 +134,7 @@ function view_item(e) {
         reject(window.alert(got.error));
       } else {
         window.localStorage.setItem("timetable", JSON.stringify(got));
-        window.location.replace("../generatepdf.html");
+        window.location.replace("../generatepdf1.html");
       }
     }
   };

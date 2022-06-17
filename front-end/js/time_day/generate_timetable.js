@@ -231,16 +231,13 @@ submit.addEventListener("click", () => {
     doc.autoTable({
       html: "#sign_footer",
       theme: "grid",
-      bodyStyles: { lineColor: [0, 0, 0], valign: "middle", halign: "center" },
-      headStyles: {
-        valign: "middle",
-        halign: "center",
-        fillColor: [255, 255, 255],
-        textColor: [0, 0, 0],
-      },
+      bodyStyles: { lineColor: [255, 255, 255], valign: "middle", halign: "center" },
       columnStyles: {
-        0: { columnWidth: 300 },
-        1: { columnWidth: 300 },
+        0: { cellPadding: 13 },
+        1: { cellPadding: 13  },
+        2: { cellPadding: 13  },
+        3: { cellPadding: 13  },
+        4: { cellPadding: 13  },
       },
     });
 

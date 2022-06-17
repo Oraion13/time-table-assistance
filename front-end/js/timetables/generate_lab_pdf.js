@@ -171,6 +171,21 @@ submit.addEventListener("click", () => {
       theme: "grid",
       bodyStyles: { lineColor: [0, 0, 0], valign: "middle", halign: "center" },
     });
+
+    // Footer
+    doc.autoTable({
+      html: "#sign_footer",
+      theme: "grid",
+      bodyStyles: { lineColor: [255, 255, 255], valign: "middle", halign: "center", fontStyle: "bold" },
+      columnStyles: {
+        0: { cellPadding: 13 },
+        1: { cellPadding: 13  },
+        2: { cellPadding: 13  },
+        3: { cellPadding: 13  },
+        4: { cellPadding: 13  },
+      },
+    });
+    
     doc.save("table.pdf");
   }
 });

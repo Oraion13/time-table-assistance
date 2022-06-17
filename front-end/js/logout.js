@@ -12,6 +12,7 @@ function logout() {
       if (got.error) {
         window.alert(got.error);
       } else {
+        window.localStorage.removeItem("user");
         window.alert("admin logged out");
         window.location.replace("./login.html");
       }
