@@ -58,7 +58,7 @@ const fill_time_day = (time_day) => {
 // get timetable from local storage
 const get_timetable = () => {
   return window.localStorage.getItem("timetable")
-    ? JSON.parse(window.localStorage.getItem("timetable"))
+    ? JSON.parse(window.localStorage.getItem("timetable"))[0]
     : [];
 };
 

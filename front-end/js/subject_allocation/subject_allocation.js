@@ -26,7 +26,7 @@ let edit_id = "";
 // get timetable from local storage
 const get_timetable = () => {
   return window.localStorage.getItem("timetable")
-    ? JSON.parse(window.localStorage.getItem("timetable"))
+    ? JSON.parse(window.localStorage.getItem("timetable"))[0]
     : [];
 };
 
@@ -86,6 +86,8 @@ const get_subjects = (cat) => {
     const timetable = get_timetable();
 
     const xhr = new XMLHttpRequest();
+    // console.log("tt", timetable);
+    // console.log("dept", timetable.department_id, "sem", timetable.semester, "cat", cat);
 
     // get subjects
     xhr.open(
@@ -103,6 +105,7 @@ const get_subjects = (cat) => {
         if (got.error) {
           reject(alert(got.error));
         } else {
+          console.log("subj", got);
           resolve(got);
         }
       }

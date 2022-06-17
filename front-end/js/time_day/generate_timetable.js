@@ -108,25 +108,17 @@ function setup_header() {
     "academic_year"
   ).innerHTML = `${timetable.academic_year_from} - ${timetable.academic_year_to}`;
 
-  document.getElementById(
-    "department1"
-  ).innerHTML = `${timetable.department}`;
+  document.getElementById("department1").innerHTML = `${timetable.department}`;
 
-  document.getElementById(
-    "semester"
-  ).innerHTML = `${integer_to_roman(timetable.semester)}`;
+  document.getElementById("semester").innerHTML = `${integer_to_roman(
+    timetable.semester
+  )}`;
 
-  document.getElementById(
-    "regulation"
-  ).innerHTML = `${timetable.regulation}`;
+  document.getElementById("regulation").innerHTML = `${timetable.regulation}`;
 
-  document.getElementById(
-    "room_no"
-  ).innerHTML = `${timetable.room_no}`;
+  document.getElementById("room_no").innerHTML = `${timetable.room_no}`;
 
-  document.getElementById(
-    "period"
-  ).innerHTML = `${timetable.period}`;
+  document.getElementById("period").innerHTML = `${timetable.period}`;
 
   document.getElementById(
     "with_effect_from"
@@ -185,7 +177,6 @@ function setup_footer() {
       if (got.error) {
         alert(got.error);
       } else {
-
         fill_table_footer_body(got);
       }
     }
@@ -235,6 +226,24 @@ submit.addEventListener("click", () => {
       theme: "grid",
       bodyStyles: { lineColor: [0, 0, 0], valign: "middle", halign: "center" },
     });
+
+    // Footer
+    doc.autoTable({
+      html: "#sign_footer",
+      theme: "grid",
+      bodyStyles: { lineColor: [0, 0, 0], valign: "middle", halign: "center" },
+      headStyles: {
+        valign: "middle",
+        halign: "center",
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+      },
+      columnStyles: {
+        0: { columnWidth: 300 },
+        1: { columnWidth: 300 },
+      },
+    });
+
     doc.save("table.pdf");
   }
 });
