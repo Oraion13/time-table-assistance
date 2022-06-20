@@ -145,9 +145,7 @@ class Timetable_api extends Timetables
                 $row = $this->Timetable->read_single();
 
                 echo json_encode(
-                    array(
                         $row
-                    )
                 );
             } else {
                 send(400, 'error', 'time table cannot be created');

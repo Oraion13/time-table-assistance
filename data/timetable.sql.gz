@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 22, 2022 at 04:56 AM
--- Server version: 8.0.28
--- PHP Version: 8.1.4
+-- Generation Time: Jun 18, 2022 at 05:38 AM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 8.0.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,10 +28,10 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `timetable_admin` (
-  `admin_id` int NOT NULL,
-  `admin_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `admin_id` int(11) NOT NULL,
+  `admin_name` varchar(200) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `timetable_admin`
@@ -47,9 +47,9 @@ INSERT INTO `timetable_admin` (`admin_id`, `admin_name`, `password`) VALUES
 --
 
 CREATE TABLE `timetable_departments` (
-  `department_id` int NOT NULL,
-  `department` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `department_id` int(11) NOT NULL,
+  `department` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `timetable_departments`
@@ -59,7 +59,8 @@ INSERT INTO `timetable_departments` (`department_id`, `department`) VALUES
 (1, 'Department of Computer Science and Engineering'),
 (2, 'Department of Mechanical Engineering'),
 (3, 'Department of Electronics and Communication Engineering'),
-(4, 'Department of Civil Engineering');
+(4, 'Department of Civil Engineering'),
+(5, 'Science and Humanities');
 
 -- --------------------------------------------------------
 
@@ -68,11 +69,11 @@ INSERT INTO `timetable_departments` (`department_id`, `department`) VALUES
 --
 
 CREATE TABLE `timetable_faculties` (
-  `faculty_id` int NOT NULL,
-  `faculty_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `faculty` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `department_id` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `faculty_id` int(11) NOT NULL,
+  `faculty_code` varchar(200) DEFAULT NULL,
+  `faculty` varchar(200) DEFAULT NULL,
+  `department_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `timetable_faculties`
@@ -87,7 +88,26 @@ INSERT INTO `timetable_faculties` (`faculty_id`, `faculty_code`, `faculty`, `dep
 (26, '3331', 'Dr.K.Gokulakrishnan ', 3),
 (27, '3332', 'Mrs.E.Geetha ', 3),
 (28, '4441', 'Dr.O.Ganesh Babu ', 4),
-(29, '4442', 'Dr.J.Thirumal', 4);
+(29, '4442', 'Dr.J.Thirumal', 4),
+(30, '5551', 'Dr.M.Subramanian', 5),
+(31, '1114', 'Dr.J.Jesu Vedha Nayahi', 1),
+(32, '1115', 'Dr.E.Golden Julie', 1),
+(33, '1116', 'Dr.J.Roselin', 1),
+(34, '1117', 'Dr.M.Nava Barathy', 1),
+(35, '5552', 'Dr.B.Jayanthi', 5),
+(36, '2223', 'Dr.S.Rajakumar', 2),
+(37, '2224', 'Dr.J.Bruce Ralphin Rose', 2),
+(38, '2225', 'Mr.N.Sankareswaran', 2),
+(39, '2226', 'Dr.N.Shenbaga Vinayaga Moorthi', 2),
+(40, '3333', 'Mrs.K.Usha Kingsly Devi', 3),
+(41, '3334', 'Dr.S.Suja Priyadharsini', 3),
+(42, '3335', 'Mrs.R.Deeba', 3),
+(43, '3336', 'Mr.V.Wilfred Muthuraju', 3),
+(44, '4443', 'Mrs.G.Devi', 4),
+(45, '4444', 'Mrs.C.Jayalakshmi', 4),
+(46, '4445', 'Dr.S.Adishkumar', 4),
+(47, '4446', 'Dr.B.Venkatesan', 4),
+(48, '4447', 'Mr.B.Ramkumar', 4);
 
 -- --------------------------------------------------------
 
@@ -96,65 +116,545 @@ INSERT INTO `timetable_faculties` (`faculty_id`, `faculty_code`, `faculty`, `dep
 --
 
 CREATE TABLE `timetable_subjects` (
-  `subject_id` int NOT NULL,
-  `subject_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `subject` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `department_id` int DEFAULT NULL,
-  `semester` int DEFAULT NULL,
-  `category_id` int DEFAULT NULL,
-  `contact_periods` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `subject_id` int(11) NOT NULL,
+  `subject_code` varchar(100) NOT NULL,
+  `subject` varchar(300) NOT NULL,
+  `department_id` int(11) NOT NULL,
+  `semester` int(11) NOT NULL,
+  `category_id` int(11) NOT NULL,
+  `contact_periods` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `timetable_subjects`
 --
 
 INSERT INTO `timetable_subjects` (`subject_id`, `subject_code`, `subject`, `department_id`, `semester`, `category_id`, `contact_periods`) VALUES
-(1, 'HS8151', 'Communicative English', 1, 1, 1, 4),
-(2, 'MA8151', 'Engineering Mathematics I', 1, 1, 2, 4),
-(3, 'PH8151', 'Engineering Physics ', 1, 1, 2, 3),
-(4, 'CY8151', 'Engineering Chemistry ', 1, 1, 2, 3),
-(5, 'GE8151', 'Problem Solving and Python Programming ', 1, 1, 3, 3),
+(1, 'HS8151', 'Communicative English', 1, 0, 1, 4),
+(2, 'MA8151', 'Engineering Mathematics-1', 1, 1, 2, 4),
+(3, 'PH8151', 'Engineering Physics', 1, 1, 2, 3),
+(4, 'CY8151', 'Engineering Chemistry', 1, 1, 2, 3),
+(5, 'GE8151', 'Problem solving and python programming', 1, 1, 3, 3),
 (6, 'GE8152', 'Engineering Graphics', 1, 1, 3, 6),
-(7, 'GE8161', 'Problem Solving and Python Programming Laboratory', 1, 1, 3, 4),
-(8, 'BS8161', 'Physics and Chemistry Laboratory ', 1, 1, 2, 4),
-(9, 'HS8251', 'Technical English ', 1, 2, 1, 4),
-(10, 'MA8251', 'Engineering Mathematics II', 1, 2, 2, 4),
-(11, 'PH8252', 'Physics for Information Science ', 1, 2, 2, 3),
-(12, 'BE8255', 'Basic Electrical,Electronics and Measurement Engineering ', 1, 2, 3, 3),
-(13, 'GE8291', 'Environmental Science and Engineering ', 1, 2, 1, 3),
+(7, 'GE8161', 'Problem solving and python programming laboratory', 1, 1, 3, 4),
+(8, 'BS8161', 'Physics and Chemistry laboratory', 1, 1, 2, 4),
+(9, 'HS8251', 'Technical English', 1, 0, 1, 4),
+(10, 'MA8251', 'Engineering Mathematics-2', 1, 2, 2, 4),
+(11, 'PH8252', 'Physics for Information Science', 1, 2, 2, 3),
+(12, 'BE8255', 'Basic Electrical,Electronics and Measurement Engineering', 1, 2, 3, 3),
+(13, 'GE8291', 'Environmental Science and Engineering', 1, 2, 1, 3),
 (14, 'CS8251', 'Programming in C', 1, 2, 4, 3),
-(15, 'GE8261', 'Engineering Practices Laboratory ', 1, 2, 3, 4),
-(16, 'CS8261', 'C Programming Laboratory ', 1, 2, 4, 4),
-(17, 'MA8351', 'Discrete Mathematics ', 2, 3, 2, 4),
-(18, 'CS8351', 'Digital Principles and System Design', 2, 3, 3, 4),
-(19, 'CS8391', 'Data Structures', 2, 3, 4, 3),
-(20, 'CS8392', 'Object Oriented Programming ', 2, 3, 4, 3),
-(21, 'EC8395', 'Communication Engineering ', 2, 3, 3, 3),
-(22, 'CS8381', 'Data Structures Laboratory ', 3, 3, 4, 4),
-(23, 'CS8383', 'Object Oriented Programming Laboratory ', 3, 3, 4, 4),
-(24, 'CS8382', 'Digital Systems Laboratory ', 3, 3, 3, 4),
-(25, 'HS8381', 'Interpersonal Skills-Listening and Speaking ', 1, 1, 6, 2),
-(26, 'MA8402', 'Probability and Queueing Theory', 3, 4, 2, 4),
-(27, 'CS8491', 'Computer Architecture ', 3, 4, 4, 3),
-(28, 'CS8492', 'Database Management System ', 3, 4, 4, 3),
-(29, 'CS8451', 'Design and Analysis of Algorithms', 3, 4, 4, 3),
-(30, 'CS8493', 'Operating Systems ', 3, 4, 4, 3),
-(31, 'CS8494', 'Software Engineering ', 3, 4, 4, 3),
-(32, 'CS8481', 'Database Management Systems Laboratory ', 3, 4, 4, 4),
-(33, 'CS8461', 'Operating Systems Laboratory ', 4, 4, 4, 4),
-(34, 'HS8461', 'Advanced Reading and Writing', 4, 4, 6, 2),
-(35, 'MA8551', 'Algebra and Number Theory', 4, 5, 2, 4),
-(36, 'CS8591', 'Computer Networks', 4, 5, 4, 3),
-(37, 'EC8691', 'Microprocessors and Microcontrollers ', 4, 5, 4, 3),
-(38, 'CS8501', 'Theory of Computation', 4, 5, 4, 3),
-(39, 'CS8592', 'Object Oriented Analysis and Design', 4, 5, 4, 3),
-(41, 'EC8681', 'Microprocessors and Microcontrollers Laboratory  ', 4, 5, 4, 4),
-(42, 'CS8582', 'Object Oriented Analysis and Design Laboratory ', 4, 5, 4, 4),
-(43, 'CS8581', 'Network Laboratory ', 4, 5, 4, 4),
-(44, 'CS8075', 'Data Warehousing and Data Mining', 1, 1, 5, 3),
-(45, 'IT8076', 'Software Testing', 1, 1, 5, 3),
-(46, 'HS8381', 'Interpersonal Skills/Listening & Speaking', 1, 0, 6, 2);
+(15, 'GE8261', 'Engineering Practices Laboratory', 1, 2, 3, 4),
+(16, 'CS8261', 'C Programming Laboratory', 1, 2, 4, 4),
+(17, 'MA8351', 'Discrete Mathematics', 1, 3, 2, 4),
+(18, 'CS8351', 'Digital Principles and System Design', 1, 3, 3, 4),
+(19, 'CS8391', 'Data Structures', 1, 3, 4, 3),
+(20, 'CS8392', 'Object Oriented Programming', 1, 3, 4, 3),
+(21, 'EC8395', 'Communication Engineering', 1, 3, 3, 3),
+(22, 'CS8381', 'Data Structures Laboratory', 1, 3, 4, 4),
+(23, 'CS8383', 'Object Oriented Programming Laboratory', 1, 3, 4, 4),
+(24, 'CS8382', 'Digital Systems Laboratory', 1, 3, 3, 4),
+(25, 'HS8381', 'Interpersonal Skills/Listening and Speaking', 1, 0, 6, 2),
+(26, 'MA8402', 'Probability and Queueing Theory', 1, 4, 2, 4),
+(27, 'CS8491', 'Computer Architecture', 1, 4, 4, 3),
+(28, 'CS8492', 'Database Management Systems', 1, 4, 4, 3),
+(29, 'CS8451', 'Design and Analysis of Algorithms', 1, 4, 4, 3),
+(30, 'CS8493', 'Operating Systems', 1, 4, 4, 3),
+(31, 'CS8494', 'Software Engineeering', 1, 4, 4, 3),
+(32, 'CS8481', 'Database Management Systems Laboratory', 1, 4, 4, 4),
+(33, 'CS8461', 'Operating Systems Laboratory', 1, 4, 4, 4),
+(34, 'HS8461', 'Advanced Reading and Writing', 1, 0, 6, 2),
+(35, 'MA8551', 'Algebra and Number Theory', 1, 5, 2, 4),
+(36, 'CS8591', 'Computer Networks', 1, 5, 4, 3),
+(37, 'EC8691', 'Microprocessors and Microcontrollers', 1, 5, 4, 3),
+(38, 'CS8501', 'Theory of Computation', 1, 5, 4, 3),
+(39, 'CS8592', 'Object Oriented Analysis and Design', 1, 5, 4, 3),
+(40, 'EC8681', 'Microprocessors and Microcontrollers Laboratory', 1, 5, 4, 4),
+(41, 'CS8582', 'Object Oriented Analysis and Design Laboratory', 1, 5, 4, 4),
+(42, 'CS8581', 'Networks Laboratory', 1, 5, 4, 4),
+(43, 'CS8651', 'Internet Programming', 1, 6, 4, 3),
+(44, 'CS8691', 'Artificial Intelligence', 1, 6, 4, 3),
+(45, 'CS8601', 'Mobile Computing', 1, 6, 4, 3),
+(46, 'CS8602', 'Compiler Design', 1, 6, 4, 5),
+(47, 'CS8603', 'Distributed Systems', 1, 6, 4, 3),
+(48, 'CS8661', 'Internet Programming Laboratory', 1, 6, 4, 4),
+(49, 'CS8662', 'Mobile Application Development Laboratory', 1, 6, 4, 4),
+(50, 'CS8611', 'Mini Project', 1, 6, 6, 2),
+(51, 'HS8581', 'Professional Communication', 1, 6, 6, 2),
+(52, 'MG8591', 'Principles of Management', 1, 7, 1, 3),
+(53, 'CS8792', 'Cryptography and Network Security', 1, 7, 4, 3),
+(54, 'CS8791', 'Cloud Computing', 1, 7, 4, 3),
+(55, 'CS8711', 'Cloud Computing Laboratory', 1, 7, 4, 4),
+(56, 'IT8761', 'Security Laboratory', 1, 7, 4, 4),
+(57, 'CS8811', 'Project Work', 1, 8, 6, 20),
+(58, 'HS8251', 'Technical English', 2, 2, 1, 4),
+(59, 'MA8251', 'Engineering Mathematics-2', 2, 2, 2, 4),
+(60, 'PH8251', 'Materials Science', 2, 2, 2, 3),
+(61, 'BE8253', 'Basic Electrical,Electronics and Instrumentation Engineering', 2, 2, 3, 3),
+(62, 'GE8291', 'Environmental Science and Engineering', 2, 2, 1, 3),
+(63, 'GE8292', 'Engineering Mechanics', 2, 2, 3, 5),
+(64, 'GE8261', 'Engineering Practices Laboratory', 2, 2, 3, 4),
+(65, 'BE8261', 'Basic Electrical,Electronics and Instrumentation Engineering Laboratory', 2, 2, 3, 4),
+(66, 'MA8353', 'Transforms and Partial Differential Equations', 2, 3, 2, 4),
+(67, 'ME8391', 'Engineering Thermodynamics', 2, 3, 4, 5),
+(68, 'CE8394', 'Fluid Mechanics and Machinery', 2, 3, 3, 4),
+(69, 'ME8351', 'Manufacturing Technology-1', 2, 3, 4, 3),
+(70, 'EE8353', 'Electrical Drives and Controls', 2, 3, 3, 3),
+(71, 'ME8361', 'Manufacturing Technology Laboratory-1', 2, 3, 4, 4),
+(72, 'ME8381', 'Computer Aided Machine Drawing', 2, 3, 4, 4),
+(73, 'EE8361', 'Electrical Engineering Laboratory', 2, 3, 3, 4),
+(74, 'HS8381', 'Interpersonal Skills/Listening & Speaking', 2, 3, 6, 2),
+(75, 'MA8452', 'Statistics and Numerical Methods', 2, 4, 2, 4),
+(76, 'ME8492', 'Kinematics of Machinery', 2, 4, 4, 3),
+(77, 'ME8451', 'Manufacturing Technology-2', 2, 4, 4, 3),
+(78, 'ME8491', 'Engineering Mettallurgy', 2, 4, 4, 3),
+(79, 'CE8395', 'Strength of Materials for Mechanical Engineers', 2, 4, 3, 3),
+(80, 'ME8493', 'Thermal Engineering-1', 2, 4, 4, 3),
+(81, 'ME8462', 'Manufacturing Technology Laboratory-2', 2, 4, 4, 4),
+(82, 'CE8381', 'Strength of Materials and Fluid Mechanics and Machinery Laboratory', 2, 4, 3, 4),
+(83, 'HS8461', 'Advanced Reading and Writing', 2, 4, 6, 2),
+(84, 'ME8595', 'Thermal Engineering-2', 2, 5, 4, 3),
+(85, 'ME8593', 'Design of Machine Elements', 2, 5, 4, 3),
+(86, 'ME8501', 'Metrology and Measurements', 2, 5, 4, 3),
+(87, 'ME8594', 'Dynamics of Machines', 2, 5, 4, 4),
+(88, 'ME8511', 'Kinematics and Dynamics Laboratory', 2, 5, 4, 4),
+(89, 'ME8512', 'Thermal Engineering Laboratory', 2, 5, 4, 4),
+(90, 'ME8513', 'Metrology and Measurements Laboratory', 2, 5, 4, 4),
+(91, 'ME8651', 'Design of Transmission Systems', 2, 6, 4, 3),
+(92, 'ME8691', 'Computer Aided Design and Manufacturing', 2, 6, 4, 3),
+(93, 'ME8693', 'Heat and Mass Transfer', 2, 6, 4, 5),
+(94, 'ME8692', 'Finite Element Analysis', 2, 6, 4, 3),
+(95, 'ME8694', 'Hydraulics and Pneumatics', 2, 6, 4, 3),
+(96, 'ME8681', 'CAD/CAM Laboratory', 2, 6, 4, 4),
+(97, 'ME8682', 'Design and Fabrication Project', 2, 6, 6, 4),
+(98, 'HS8581', 'Professional Communication', 2, 6, 6, 2),
+(99, 'ME8792', 'Power Plant Engineering', 2, 7, 4, 3),
+(100, 'ME8793', 'Process Planning and Cost Estimation', 2, 7, 4, 3),
+(101, 'ME8791', 'Mechatronics', 2, 7, 4, 3),
+(102, 'ME8711', 'Simulation and Analysis Laboratory', 2, 7, 4, 4),
+(103, 'ME8781', 'Mechatronics Laboratory', 2, 7, 4, 4),
+(104, 'ME8712', 'Technical Seminar', 2, 7, 6, 2),
+(105, 'MG8591', 'Principles of Management', 2, 8, 1, 3),
+(106, 'ME8811', 'Project Work', 2, 8, 6, 20),
+(107, 'HS8251', 'Technical English', 3, 2, 1, 4),
+(108, 'MA8251', 'Engineering Mathematics-2', 3, 2, 2, 4),
+(109, 'PH8253', 'Physics for Electronics Engineering', 3, 2, 2, 3),
+(110, 'BE8254', 'Basic Electrical and Instrumentation Engineering', 3, 2, 3, 3),
+(111, 'EC8251', 'Circuit Analysis', 3, 2, 4, 4),
+(112, 'EC8252', 'Electronic Devices', 3, 2, 4, 3),
+(113, 'EC8261', 'Circuits and Devices Laboratory', 3, 2, 4, 4),
+(114, 'GE8261', 'Engineering Practices Laboratory', 3, 2, 3, 4),
+(115, 'MA8352', 'Linear Algebra and Partial Differential Equations', 3, 3, 2, 4),
+(116, 'EC8393', 'Fundamentals of Data Structures in C', 3, 3, 3, 3),
+(117, 'EC8351', 'Electronic Circuits-1', 3, 3, 4, 3),
+(118, 'EC8352', 'Signals and Systems', 3, 3, 4, 4),
+(119, 'EC8392', 'Digital Electronics', 3, 3, 4, 3),
+(120, 'EC8391', 'Control Systems Engineering', 3, 3, 4, 3),
+(121, 'EC8381', 'Fundamentals of Data Structures in C Laboratory', 3, 3, 3, 4),
+(122, 'EC8361', 'Analog and Digital Circuits Laboratory', 3, 3, 4, 4),
+(123, 'HS8381', 'Interpersonal Skills/Listening and Speaking', 3, 3, 6, 2),
+(124, 'MA8451', 'Probability and Random Processes', 3, 4, 2, 4),
+(125, 'EC8452', 'Electronic Circuits-2', 3, 4, 4, 3),
+(126, 'EC8491', 'Communication Theory', 3, 4, 4, 3),
+(127, 'EC8451', 'Electromagnetic Fields', 3, 4, 4, 4),
+(128, 'EC8453', 'Linear Integrated Circuits', 3, 4, 4, 3),
+(129, 'GE8291', 'Environmental Science and Engineering', 3, 4, 1, 3),
+(130, 'EC8461', 'Circuits Design and Simulation Laboratory', 3, 4, 4, 4),
+(131, 'EC8462', 'Linear Integrated Circuits Laboratory', 3, 4, 4, 4),
+(132, 'EC8501', 'Digital Communication', 3, 5, 4, 3),
+(133, 'EC8553', 'Discrete-Time Signal Processing', 3, 5, 4, 4),
+(134, 'EC8552', 'Computer Architecture and Organization', 3, 5, 4, 3),
+(135, 'EC8551', 'Communication Networks', 3, 5, 4, 3),
+(136, 'EC8562', 'Digital Signal Processing Laboratory', 3, 5, 4, 4),
+(137, 'EC8561', 'Communication Systems Laboratory', 3, 5, 4, 4),
+(138, 'EC8563', 'Communication Networks Laboratory', 3, 5, 4, 4),
+(139, 'EC8691', 'Microprocessors and Microcontrollers', 3, 6, 4, 3),
+(140, 'EC8095', 'VLSI Design', 3, 6, 4, 3),
+(141, 'EC8652', 'Wireless Communication', 3, 6, 4, 3),
+(142, 'MG8591', 'Principles of Management', 3, 6, 1, 3),
+(143, 'EC8651', 'Transmission Lines and RF Systems', 3, 6, 4, 3),
+(144, 'EC8681', 'Microprocessors and Microcontrollers Laboratory', 3, 6, 4, 4),
+(145, 'EC8661', 'VLSI Design Laboratory', 3, 6, 4, 4),
+(146, 'EC8611', 'Technical Seminar', 3, 6, 6, 2),
+(147, 'EC8701', 'Antennas and Microwave Engineering', 3, 7, 4, 3),
+(148, 'EC8751', 'Optical Communication', 3, 7, 4, 3),
+(149, 'EC8791', 'Embedded and Real Time Systems', 3, 7, 4, 3),
+(150, 'EC8702', 'Ad hoc and Wireless Sensor Networks', 3, 7, 4, 3),
+(151, 'EC8711', 'Embedded Laboratory', 3, 7, 4, 4),
+(152, 'EC8761', 'Advanced Communication Laboratory', 3, 7, 4, 4),
+(153, 'EC8811', 'Project Work', 3, 8, 6, 20),
+(154, 'HS8251', 'Technical English', 4, 2, 1, 4),
+(155, 'MA8251', 'Engineering Mathematics-2', 4, 2, 2, 4),
+(156, 'PH8201', 'Physics For Civil Engineering', 4, 2, 2, 3),
+(157, 'BE8251', 'Basic Electrical and Electronics Engineering ', 4, 2, 3, 3),
+(158, 'GE8291', 'Environmental Science and Engineering', 4, 2, 1, 3),
+(159, 'GE8292', 'Engineering Mechanics', 4, 2, 3, 5),
+(160, 'GE8261', 'Engineering Practices Laboratory', 4, 2, 3, 4),
+(161, 'GE8211', 'Computer Aided Building Drawing', 4, 2, 4, 4),
+(162, 'MA8353', 'Transforms and Partial Differential Equations', 4, 3, 2, 4),
+(163, 'CE8301', 'Strength of Materials-1', 4, 3, 4, 3),
+(164, 'CE8302', 'Fluid Mechanics', 4, 3, 4, 3),
+(165, 'CE8351', 'Surveying', 4, 3, 4, 3),
+(166, 'CE8391', 'Construction Materials', 4, 3, 4, 3),
+(167, 'CE8392', 'Engineering Geology', 4, 3, 3, 3),
+(168, 'CE8311', 'Construction Materials Laboratory', 4, 3, 4, 4),
+(169, 'CE8361', 'Surveying Laboratory', 4, 3, 4, 4),
+(170, 'HS8381', 'Interpersonal Skills/Listening and Speaking', 4, 3, 6, 2),
+(171, 'MA8491', 'Numerical Methods', 4, 4, 2, 4),
+(172, 'CE8401', 'Construction Techniques and Practices', 4, 4, 4, 3),
+(173, 'CE8402', 'Strength of Materials-2', 4, 4, 4, 3),
+(174, 'CE8403', 'Applied Hydraulic Engineering', 4, 4, 4, 3),
+(175, 'CE8404', 'Concrete Technology', 4, 4, 4, 3),
+(176, 'CE8491', 'Soil Mechanics', 4, 4, 4, 3),
+(177, 'CE8481', 'Strength of Materials Laboratory', 4, 4, 4, 4),
+(178, 'CE8461', 'Hydraulic Engineering Laboratory', 4, 4, 4, 4),
+(179, 'HS8461', 'Advanced Reading and Writing', 4, 4, 6, 2),
+(180, 'CE8501', 'Design of Reinforced Cement Concrete Elements', 4, 5, 4, 5),
+(181, 'CE8502', 'Structural Analysis-1', 4, 5, 4, 3),
+(182, 'EN8491', 'Water Supply Engineering', 4, 5, 4, 3),
+(183, 'CE8591', 'Foundation Engineering', 4, 5, 4, 3),
+(184, 'CE8511', 'Soil Mechanics Laboratory', 4, 5, 4, 4),
+(185, 'CE8512', 'Water and Waste Water Analysis Laboratory ', 4, 5, 4, 4),
+(186, 'CE8513', 'Survey Camp', 4, 5, 6, 0),
+(187, 'CE8601', 'Design of Steel Structural Elements', 4, 6, 4, 5),
+(188, 'CE8602', 'Structural Analysis-2', 4, 6, 4, 3),
+(189, 'CE8603', 'Irrigation Engineering', 4, 6, 4, 3),
+(190, 'CE8604', 'Highway Engineering', 4, 6, 4, 3),
+(191, 'EN8592', 'Wastewater Engineering', 4, 6, 4, 3),
+(192, 'CE8611', 'Highway Engineering Laboratory', 4, 6, 4, 4),
+(193, 'CE8612', 'Irrigation and Environmental Engineering Drawing', 4, 6, 4, 4),
+(194, 'HS8581', 'Professional Communication', 4, 6, 6, 2),
+(195, 'CE8701', 'Estimation, Costing and Valuation Engineering', 4, 7, 4, 3),
+(196, 'CE8702', 'Railways,Airports,Docks and Harbour Engineering', 4, 7, 4, 3),
+(197, 'CE8703', 'Structural Design and Drawing', 4, 7, 4, 5),
+(198, 'CE8711', 'Creative and Innovative Project', 4, 7, 6, 4),
+(199, 'CE8712', 'Industrial Training', 4, 7, 6, 0),
+(200, 'CE8811', 'Project Work', 4, 8, 6, 20),
+(201, 'HS8151', 'Communicative English', 4, 1, 1, 4),
+(202, 'MA8151', 'Engineering Mathematics-1', 4, 1, 2, 4),
+(203, 'PH8151', 'Engineering Physics', 4, 1, 2, 3),
+(204, 'CY8151', 'Engineering Chemistry', 4, 1, 2, 3),
+(205, 'GE8151', 'Problem Solving and Python Programming', 4, 1, 3, 3),
+(206, 'GE8152', 'Engineering Graphics', 4, 1, 3, 6),
+(207, 'GE8161', 'Problem Solving and Python Programming Laboratory', 4, 1, 3, 4),
+(208, 'BS8161', 'Physics and Chemistry Laboratory', 4, 1, 2, 4),
+(209, 'HS8151', 'Communicative English', 2, 1, 1, 4),
+(210, 'MA8151', 'Engineering Mathematics-1', 2, 1, 2, 4),
+(211, 'PH8151', 'Engineering Physics', 2, 1, 2, 3),
+(212, 'CY8151', 'Engineering Chemistry', 2, 1, 2, 3),
+(213, 'GE8151', 'Problem Solving and Python Programming', 2, 1, 3, 3),
+(214, 'GE8152', 'Engineering Graphics', 2, 1, 3, 6),
+(215, 'GE8161', 'Problem Solving and Python Programming Laboratory', 2, 1, 3, 4),
+(216, 'BS8161', 'Physics and Chemistry Laboratory', 2, 1, 2, 4),
+(217, 'HS8151', 'Communicative English', 3, 1, 1, 4),
+(218, 'MA8151', 'Engineering Mathematics-1', 3, 1, 2, 4),
+(219, 'PH8151', 'Engineering Physics', 3, 1, 2, 3),
+(220, 'CY8151', 'Engineering Chemistry', 3, 1, 2, 3),
+(221, 'GE8151', 'Problem Solving and Python Programming', 3, 1, 3, 3),
+(222, 'GE8152', 'Engineering Graphics', 3, 1, 3, 6),
+(223, 'GE8161', 'Problem Solving and Python Programming Laboratory', 3, 1, 3, 4),
+(224, 'BS8161', 'Physics and Chemistry Laboratory', 3, 1, 2, 4),
+(225, 'OCE551', 'Air Pollution and Control Engineering', 1, 5, 7, 3),
+(226, 'OMD551', 'Basic of Biomedical Instrumentation', 1, 5, 7, 3),
+(227, 'OBT552', 'Basics of Bioinformatics', 1, 5, 7, 3),
+(228, 'OBM551', 'Bio Chemistry', 1, 5, 7, 3),
+(229, 'OTL552', 'Digital Audio Engineering', 1, 5, 7, 3),
+(230, 'OME551', 'Energy Conservation and Management', 1, 5, 7, 3),
+(231, 'OBT553', 'Fundamentals Of Nutrition', 1, 5, 7, 3),
+(232, 'OCE552', 'Geographic Information System', 1, 5, 7, 3),
+(233, 'OPY551', 'Herbal Technology', 1, 5, 7, 3),
+(234, 'OMD552', 'Hospital Wate Management', 1, 5, 7, 3),
+(235, 'OCH551', 'Industrial Nano Technology', 1, 5, 7, 3),
+(236, 'OBT551', 'Introduction to bioenergy and biofuels', 1, 5, 7, 3),
+(237, 'OME553', 'Industrial Safety Engineering', 1, 5, 7, 3),
+(238, 'OEI551', 'Logic and Distributed Control Systems', 1, 5, 7, 3),
+(239, 'OBM552', 'Medical Physics', 1, 5, 7, 3),
+(240, 'OML552', 'Microscopy', 1, 5, 7, 3),
+(241, 'OBT554', 'Principles of Food Preservation', 1, 5, 7, 3),
+(242, 'OMF551', 'Product Design and Development', 1, 5, 7, 3),
+(243, 'OAN551', 'Sensors and Transducers', 1, 5, 7, 3),
+(244, 'OTL551', 'Space Time WirEless Communication', 1, 5, 7, 3),
+(245, 'OEC552', 'Soft Computing', 1, 5, 7, 3),
+(246, 'OTL553', 'Telecommunication Network Management', 1, 5, 7, 3),
+(247, 'OMD553', 'Telehealth Technology', 1, 5, 7, 3),
+(248, 'OTL554', 'Wavelets and its applications', 1, 5, 7, 3),
+(249, 'OIM551', 'Worldclass Manufacturing', 1, 5, 7, 3),
+(250, 'CS8075', 'Data Warehousing and Data Mining', 1, 6, 5, 3),
+(251, 'IT8076', 'Software Testing', 1, 6, 5, 3),
+(252, 'IT8072', 'Embedded Systems', 1, 6, 5, 3),
+(253, 'CS8072', 'Agile Methodologies', 1, 6, 5, 3),
+(254, 'CS8077', 'Graph Theory and Applications', 1, 6, 5, 3),
+(255, 'IT8071', 'Digital Signal Processing', 1, 6, 5, 3),
+(256, 'GE8075', 'Intellectual Property Rights', 1, 6, 5, 3),
+(257, 'OAI751', 'Agricultural Finance,Banking and Co-operation', 1, 7, 7, 3),
+(258, 'OEE751', 'Basic Circuit Theory', 1, 7, 7, 3),
+(259, 'OBM751', 'Basics of Human Anatomy and Physiology', 1, 7, 7, 3),
+(260, 'OGI751', 'Climate Change and its Impact', 1, 7, 7, 3),
+(261, 'OPY751', 'Clinical Prials', 1, 7, 7, 3),
+(262, 'OEC751', 'Electronic Devices', 1, 7, 7, 3),
+(263, 'OML752', 'Electronic Materials', 1, 7, 7, 3),
+(264, 'OCH752', 'Energy Technology', 1, 7, 7, 3),
+(265, 'OCE751', 'Environmental and Social Impact Assessment', 1, 7, 7, 3),
+(266, 'OGI752', 'Fundamentals of Planetary and Remote Sensing ', 1, 7, 7, 3),
+(267, 'OEN751', 'Green Building Design', 1, 7, 7, 3),
+(268, 'OBM752', 'Hospital Management', 1, 7, 7, 3),
+(269, 'OEE752', 'Introduction to Renewable Energy Systems', 1, 7, 7, 3),
+(270, 'OBT753', 'Introduction of Cell Biology', 1, 7, 7, 3),
+(271, 'OMF751', 'Lean Six Sigma', 1, 7, 7, 3),
+(272, 'OAN751', 'Low Cost Automation', 1, 7, 7, 3),
+(273, 'OEC754', 'Medical Electronics', 1, 7, 7, 3),
+(274, 'OEC756', 'MEMS and NEMS', 1, 7, 7, 3),
+(275, 'OBT752', 'Microbilogy', 1, 7, 7, 3),
+(276, 'OCH751', 'Process Modeling and Simulation', 1, 7, 7, 3),
+(277, 'OIE751', 'Robotics', 1, 7, 7, 3),
+(278, 'OEC753', 'Signals and Systems', 1, 7, 7, 3),
+(279, 'OME752', 'Supply Chain Management', 1, 7, 7, 3),
+(280, 'OME753', 'Systems Engineering', 1, 7, 7, 3),
+(281, 'OPL751', 'Telecommunication System Modeling and Simulation', 1, 7, 7, 3),
+(282, 'OCY751', 'Waste Water Treatment', 1, 7, 7, 3),
+(283, 'CS8091', 'Big Data Analytics', 1, 7, 5, 3),
+(284, 'CS8082', 'Machine Learning Techniques', 1, 7, 5, 3),
+(285, 'CS8092', 'Computer Graphics and Multimedia', 1, 7, 5, 3),
+(286, 'IT8075', 'Software Project Managemnet', 1, 7, 5, 3),
+(287, 'CS8081', 'Internet of Things', 1, 7, 5, 3),
+(288, 'IT8074', 'Service Oriented Architecture', 1, 7, 5, 3),
+(289, 'GE8077', 'Total Quality Management', 1, 7, 5, 3),
+(290, 'CS8083', 'Multi-Core Architectures and Programming', 1, 7, 5, 3),
+(291, 'CS8079', 'Human Computer Interaction', 1, 7, 5, 3),
+(292, 'CS8073', 'CSharp and .Net Programming', 1, 7, 5, 3),
+(293, 'CS8088', 'Wireless Adhoc and Sensor Networks', 1, 7, 5, 3),
+(294, 'CS8071', 'Advanced Topics On Databases', 1, 7, 5, 3),
+(295, 'GE8072', 'Foundation Skills in Integrated Product Development', 1, 7, 5, 3),
+(296, 'GE8074', 'Human Rights', 1, 7, 5, 3),
+(297, 'GE8071', 'Disaster Management', 1, 7, 5, 3),
+(298, 'EC8093', 'Digital Image Processing', 1, 8, 5, 3),
+(299, 'CS8085', 'Social Network Analysis', 1, 8, 5, 3),
+(300, 'IT8073', 'Information Security', 1, 8, 5, 3),
+(301, 'CS8087', 'Software Defined Networks', 1, 8, 5, 3),
+(302, 'CS8074', 'Cyber Forensics', 1, 8, 5, 3),
+(303, 'CS8086', 'Soft Computing', 1, 8, 5, 3),
+(304, 'GE8076', 'Professional Ethics in Engineering', 1, 8, 5, 3),
+(305, 'CS8080', 'Information Retrieval Techniques', 1, 8, 5, 3),
+(306, 'CS8078', 'Green Computing', 1, 8, 5, 3),
+(307, 'CS8076', 'GPU Architecture and Programming', 1, 8, 5, 3),
+(308, 'CS8084', 'Natural Language Processing', 1, 8, 5, 3),
+(309, 'CS8001', 'Parallel Algorithms', 1, 8, 5, 3),
+(310, 'IT8077', 'Speech Processing', 1, 8, 5, 3),
+(311, 'GE8073', 'Fundamentals of Nano Science', 1, 8, 5, 3),
+(312, 'OCE551', 'Air Pollution and Control Engineering', 2, 5, 7, 3),
+(313, 'OAT551', 'Automotive Systems', 2, 5, 7, 3),
+(314, 'OIC551', 'Biomedical Instrumentation', 2, 5, 7, 3),
+(315, 'OIT552', 'Cloud Computing', 2, 5, 7, 3),
+(316, 'OIT551', 'Database Management Systems', 2, 5, 7, 3),
+(317, 'OAI551', 'Environment and Agriculture', 2, 5, 7, 3),
+(318, 'OPT551', 'Fibre Reinforced Plastics', 2, 5, 7, 3),
+(319, 'OCE552', 'Geographic Information System', 2, 5, 7, 3),
+(320, 'OAT552', 'Internal Combustion Engines', 2, 5, 7, 3),
+(321, 'OML551', 'Introduction to Nano Technology', 2, 5, 7, 3),
+(322, 'OIM552', 'Lean Manufacturing', 2, 5, 7, 3),
+(323, 'OBM552', 'Medical Physics', 2, 5, 7, 3),
+(324, 'OML552', 'Microscopy', 2, 5, 7, 3),
+(325, 'OAI552', 'Participatory Water Resources Management', 2, 5, 7, 3),
+(326, 'OCH552', 'Principles of Chemical Engineering', 2, 5, 7, 3),
+(327, 'OBT554', 'Principles of Food Preservation', 2, 5, 7, 3),
+(328, 'OMF551', 'Product Design and Development', 2, 5, 7, 3),
+(329, 'OAI553', 'Production Technology of Agricultural Machinery', 2, 5, 7, 3),
+(330, 'ORO551', 'Renewable Energy Sources', 2, 5, 7, 3),
+(331, 'OAN551', 'Sensors and Transducers', 2, 5, 7, 3),
+(332, 'OIC552', 'State Variable Analysis and Design', 2, 5, 7, 3),
+(333, 'OTL553', 'Telecommunication Network Management', 2, 5, 7, 3),
+(334, 'OIM551', 'World Class Manufacturing', 2, 5, 7, 3),
+(335, 'ME8091', 'Automobile Engineering', 2, 6, 5, 3),
+(336, 'PR8592', 'Welding Technology', 2, 6, 5, 3),
+(337, 'ME8096', 'Gas Dynamics and Jet Propulsion', 2, 6, 5, 3),
+(338, 'GE8075', 'Intellectual Property Rights', 2, 6, 5, 3),
+(339, 'GE8073', 'Fundamentals of Nano Science', 2, 6, 5, 3),
+(340, 'OAI751', 'Agricultural Finance,Banking and Co-operation', 2, 7, 7, 3),
+(341, 'OEE751', 'Basic Circuit Theory', 2, 7, 7, 3),
+(342, 'OGI751', 'Climate Change and its Impact', 2, 7, 7, 3),
+(343, 'OCS751', 'Data Structures and Algorithms', 2, 7, 7, 3),
+(344, 'OML752', 'Electronic Materials', 2, 7, 7, 3),
+(345, 'OCE751', 'Environmental and Social Impact Assessment', 2, 7, 7, 3),
+(346, 'OAE751', 'Fundamentals of Combustion', 2, 7, 7, 3),
+(347, 'OGI752', 'Fundamentals of Planetary Remote Sensing', 2, 7, 7, 3),
+(348, 'OEN751', 'Green Building Design', 2, 7, 7, 3),
+(349, 'OAI752', 'Integrated Water Resources Management', 2, 7, 7, 3),
+(350, 'OEI751', 'Introduction to Embedded Systems', 2, 7, 7, 3),
+(351, 'OMF751', 'Lean SIX Sigma', 2, 7, 7, 3),
+(352, 'OAN751', 'Low Cost Automation', 2, 7, 7, 3),
+(353, 'OMP751', 'MEMS and NEMS', 2, 7, 7, 3),
+(354, 'ORO751', 'Nano Computing', 2, 7, 7, 3),
+(355, 'OAE752', 'Principles of Flight Mechanics', 2, 7, 7, 3),
+(356, 'OCH751', 'Process Modeling and Simulation', 2, 7, 7, 3),
+(357, 'OAT751', 'Production of Automotive Components', 2, 7, 7, 3),
+(358, 'OIE751', 'Robotics', 2, 7, 7, 3),
+(359, 'OML753', 'Selection of Materials', 2, 7, 7, 3),
+(360, 'OML751', 'Testing of Materials', 2, 7, 7, 3),
+(361, 'OAT752', 'Vehicle Styling and Design', 2, 7, 7, 3),
+(362, 'OTT751', 'Weaving Mechanisms', 2, 7, 7, 3),
+(363, 'OMP751', 'Marine Vehicles', 2, 7, 7, 3),
+(364, 'ME8071', 'Refrigeration and Airconditioning', 2, 7, 5, 3),
+(365, 'ME8072', 'Renewable Sources of Energy', 2, 7, 5, 3),
+(366, 'ME8098', 'Quality Control and Reliability Engineering', 2, 7, 5, 3),
+(367, 'ME8073', 'Unconventional MachininG Processes', 2, 7, 5, 3),
+(368, 'MG8491', 'Operations Research', 2, 7, 5, 3),
+(369, 'MF8071', 'Additive Manufacturing', 2, 7, 5, 3),
+(370, 'GE8077', 'Total Quality Management', 2, 7, 5, 3),
+(371, 'ME8099', 'Robotics', 2, 7, 5, 3),
+(372, 'ME8095', 'Designs of Jigs,Fixtures and Press Tools', 2, 7, 5, 3),
+(373, 'ME8093', 'Computational Fluid Dynamics', 2, 7, 5, 3),
+(374, 'ME8097', 'Non Destructive Testing and Evaluation', 2, 7, 5, 3),
+(375, 'ME8092', 'Composite Materials and Mechanics', 2, 7, 5, 3),
+(376, 'GE8072', 'Foundation Skills in Integrated Product Development', 2, 7, 5, 3),
+(377, 'GE8074', 'Human Rights', 2, 7, 5, 3),
+(378, 'GE8071', 'Disaster Management', 2, 7, 5, 3),
+(379, 'IE8693', 'Production Planning and Control', 2, 8, 5, 3),
+(380, 'MG8091', 'Entrepreneurship Development', 2, 8, 5, 3),
+(381, 'ME8094', 'Computer Integrated Manufacturing Systems', 2, 8, 5, 3),
+(382, 'ME8074', 'Vibration and Noise Control', 2, 8, 5, 3),
+(383, 'EE8091', 'Micro Electro Mechanical Systems', 2, 8, 5, 3),
+(384, 'GE8076', 'Professional Ethics in Engineering', 2, 8, 5, 3),
+(385, 'CS8392', 'Object Oriented Programming', 3, 5, 5, 3),
+(386, 'EC8073', 'Medical Electronics', 3, 5, 5, 3),
+(387, 'CS8493', 'Operating Systems', 3, 5, 5, 3),
+(388, 'EC8074', 'Robotics and Automation', 3, 5, 5, 3),
+(389, 'EC8075', 'Nano Technology and Applications', 3, 5, 5, 3),
+(390, 'GE8074', 'Human Rights', 3, 5, 5, 3),
+(391, 'GE8077', 'Total Quality Management', 3, 5, 5, 3),
+(392, 'OCE551', 'Air Pollution and Control Engineering', 3, 5, 7, 3),
+(393, 'OMD551', 'Basic of Biomedical Instrumentation', 3, 5, 7, 3),
+(394, 'OBM551', 'Bio Chemistry', 3, 5, 7, 3),
+(395, 'OIT552', 'Cloud Computing', 3, 5, 7, 3),
+(396, 'OIT551', 'Database Management Systems', 3, 5, 7, 3),
+(397, 'OTL552', 'Digital Audio Engineering', 3, 5, 7, 3),
+(398, 'OME551', 'Energy Conservation and Management', 3, 5, 7, 3),
+(399, 'OBT553', 'Fundamentals of Nutrition', 3, 5, 7, 3),
+(400, 'OCE552', 'Geographic Information System', 3, 5, 7, 3),
+(401, 'OPY551', 'Herbal Technology', 3, 5, 7, 3),
+(402, 'OMD552', 'Hospital Waste Management', 3, 5, 7, 3),
+(403, 'OCH551', 'Industrial Nano Technology', 3, 5, 7, 3),
+(404, 'OBT551', 'Introduction to Bioenergy and Biofuels', 3, 5, 7, 3),
+(405, 'OEI551', 'Logic and Distributed Control Systems', 3, 5, 7, 3),
+(406, 'OBM552', 'Medical Physics', 3, 5, 7, 3),
+(407, 'OML552', 'Microscopy', 3, 5, 7, 3),
+(408, 'OEI552', 'Scada System and Applications Management', 3, 5, 7, 3),
+(409, 'OBT554', 'Principles of Food Preservation', 3, 5, 7, 3),
+(410, 'OMF551', 'Product Design and Development', 3, 5, 7, 3),
+(411, 'ORO551', 'Renewable Energy Sources', 3, 5, 7, 3),
+(412, 'OCS551', 'Software Engineering', 3, 5, 7, 3),
+(413, 'OTL551', 'Space Time Wireless Communication', 3, 5, 7, 3),
+(414, 'OTL553', 'Telecommunication Network Management', 3, 5, 7, 3),
+(415, 'OMD553', 'Telehealth Technology', 3, 5, 7, 3),
+(416, 'OTL554', 'Wavelets and its Applications', 3, 5, 7, 3),
+(417, 'OIM551', 'World Class Manufacturing', 3, 5, 7, 3),
+(418, 'CS8792', 'Cryptography and Network Security', 3, 6, 5, 3),
+(419, 'EC8091', 'Advanced Digital Signal Processing', 3, 6, 5, 3),
+(420, 'EC001', 'MEMS and NEMS', 3, 6, 5, 3),
+(421, 'EC8002', 'Multimedia Compression and Communication', 3, 6, 5, 3),
+(422, 'EC8003', 'Cmos Analog IC Design', 3, 6, 5, 3),
+(423, 'EC8004', 'Wireless Networks', 3, 6, 5, 3),
+(424, 'GE8075', 'Intellectual Property Rights', 3, 6, 5, 3),
+(425, 'BC8092', 'Advanced Wireless Communication', 3, 7, 5, 3),
+(426, 'EC8071', 'Cognitive Radio', 3, 7, 5, 3),
+(427, 'GE8072', 'Foundation Skills in Integrated Product Development ', 3, 7, 5, 3),
+(428, 'CS8082', 'Machine Learning Techniques', 3, 7, 5, 3),
+(429, 'EC8005', 'Electronic Packaging and Testing', 3, 7, 5, 3),
+(430, 'EC8006', 'Mixed Signals IC Design', 3, 7, 5, 3),
+(431, 'GE8071', 'Disaster Management', 3, 7, 5, 3),
+(432, 'OAI751', 'Agricultural Finance,Banking and Co-operation', 3, 7, 7, 3),
+(433, 'OBM751', 'Basics of Human Anatomy and Physiology', 3, 7, 7, 3),
+(434, 'OGI751', 'Climate Change and its Impact', 3, 7, 7, 3),
+(435, 'OPY751', 'Clinical Trials', 3, 7, 7, 3),
+(436, 'OCS751', 'Data Structures and Algorithms', 3, 7, 7, 3),
+(437, 'OME751', 'Design of Experiments', 3, 7, 7, 3),
+(438, 'OCH752', 'Energy Technology', 3, 7, 7, 3),
+(439, 'OCE751', 'Environmental and Social Impact Assessment', 3, 7, 7, 3),
+(440, 'OGI752', 'Fundamentals of Planetary remote Sensing', 3, 7, 7, 3),
+(441, 'OEN751', 'Green Building Design', 3, 7, 7, 3),
+(442, 'OBM752', 'Hospital Mangement', 3, 7, 7, 3),
+(443, 'OME754', 'Industrial Safety', 3, 7, 7, 3),
+(444, 'OCS752', 'Introduction to C Programming', 3, 7, 7, 3),
+(445, 'OBT753', 'Introduction of Cell Biology', 3, 7, 7, 3),
+(446, 'OMF751', 'Lean SIX Sigma', 3, 7, 7, 3),
+(447, 'OAN751', 'Low Cost Automation', 3, 7, 7, 3),
+(448, 'OBT752', 'Microbiology', 3, 7, 7, 3),
+(449, 'OMB751', 'Marine Vehicles', 3, 7, 7, 3),
+(450, 'OAE752', 'Principles of Flight Mechanics', 3, 7, 7, 3),
+(451, 'OIE751', 'Robotics', 3, 7, 7, 3),
+(452, 'OME752', 'Supply Chain Management', 3, 7, 7, 3),
+(453, 'OME753', 'Systems Engineering', 3, 7, 7, 3),
+(454, 'OTL751', 'Telecommunication System Modeling and Simulation', 3, 7, 7, 3),
+(455, 'OML751', 'Testing of Materials', 3, 7, 7, 3),
+(456, 'OIC751', 'Transducer Engineering', 3, 7, 7, 3),
+(457, 'OCY751', 'Waste Water Treatment', 3, 7, 7, 3),
+(458, 'EC8072', 'Electro Magnetic Interference and  Compatability', 3, 8, 5, 3),
+(459, 'EC8007', 'Low Power Soc Design', 3, 8, 5, 3),
+(460, 'EC8008', 'Photonic Networks', 3, 8, 5, 3),
+(461, 'EC8009', 'Compressive Sensing', 3, 8, 5, 3),
+(462, 'EC8093', 'Digital Image Processing', 3, 8, 5, 3),
+(463, 'GE8076', 'Professional Ethics in Engineering', 3, 8, 5, 3),
+(464, 'EC8010', 'Video Analytics', 3, 8, 5, 3),
+(465, 'EC8011', 'Dsp Architecture and Programming', 3, 8, 5, 3),
+(466, 'EC8094', 'Satellite Communication', 3, 8, 5, 3),
+(467, 'CS8086', 'Soft Computing', 3, 8, 5, 3),
+(468, 'IT8006', 'Principles of Speech Processing', 3, 8, 5, 3),
+(469, 'GE8073', 'Fundamentals of Nano Science', 3, 8, 5, 3),
+(470, 'OME551', 'Energy Conservation and Management', 4, 5, 7, 3),
+(471, 'OAI551', 'Environment and Agriculture', 4, 5, 7, 3),
+(472, 'OCH551', 'Industrial Nanotechnology', 4, 5, 7, 3),
+(473, 'OAI553', 'Production Technology of Agricultural Machinery', 4, 5, 7, 3),
+(474, 'ORO551', 'Renewable Energy Sources', 4, 5, 7, 3),
+(475, 'OAN551', 'Sensors and Transducers', 4, 5, 7, 3),
+(476, 'OCS551', 'Software Engineering', 4, 5, 7, 3),
+(477, 'OME552', 'Vibration and Noise Control', 4, 5, 7, 3),
+(478, 'OAI751', 'Agricultural Finance,anking and Cooperation', 4, 7, 7, 3),
+(479, 'OGI751', 'Climate Change and its Impact', 4, 7, 7, 3),
+(480, 'OGI752', 'Fundamentals of Planetary Remote Sensing', 4, 7, 7, 3),
+(481, 'OEN751', 'Green Building Design', 4, 7, 7, 3),
+(482, 'OME754', 'Industrial Safety', 4, 7, 7, 3),
+(483, 'OCS752', 'Introduction to C Programming', 4, 7, 7, 3),
+(484, 'OIE751', 'Robotics', 4, 7, 7, 3),
+(485, 'OML753', 'Selection of Materials', 4, 7, 7, 3),
+(486, 'OML751', 'Testing of Materials', 4, 7, 7, 3),
+(487, 'OTT752', 'Textile effluent treatments', 4, 7, 7, 3),
+(488, 'GI8012', 'Digital Cadastre', 4, 5, 5, 3),
+(489, 'GI8013', 'Advanced Surveying', 4, 5, 5, 3),
+(490, 'GI8014', 'Geographic Information System', 4, 5, 5, 3),
+(491, 'GI8015', 'Geoinformatics Applications for Civil Engineers', 4, 5, 5, 3),
+(492, 'GI8491', 'Total Station and GPS Surveying', 4, 5, 5, 3),
+(493, 'GE8071', 'Disaster Management', 4, 5, 5, 3),
+(494, 'GE8074', 'Human Rights', 4, 5, 5, 3),
+(495, 'CE8001', 'Ground Improvement Techniques', 4, 6, 5, 3),
+(496, 'CE8002', 'Introduction to Soil Dynamics and Machine Foundations', 4, 6, 5, 3),
+(497, 'CE8003', 'Rock Engineering', 4, 6, 5, 3),
+(498, 'CE8004', 'Urban Planning and Development', 4, 6, 5, 3),
+(499, 'CE8005', 'Air Pollution and Control Engineering', 4, 6, 5, 3),
+(500, 'GE8075', 'Intellectual Property Rights', 4, 6, 5, 3),
+(501, 'CE8006', 'Pavement Engineering', 4, 7, 5, 3),
+(502, 'CE8007', 'Traffic Engineering and Management', 4, 7, 5, 3),
+(503, 'CE8008', 'Transport and Environment', 4, 7, 5, 3),
+(504, 'CE8009', 'Industrial Structures', 4, 7, 5, 3),
+(505, 'CE8010', 'Environmental and Social Impact Assessment', 4, 7, 5, 3),
+(506, 'CE8011', 'Design of Prestressed Concrete Structures', 4, 7, 5, 3),
+(507, 'CE8012', 'Construction Planning and Scheduling', 4, 7, 5, 3),
+(508, 'EN8591', 'Municipal Solid Waste Management', 4, 7, 5, 3),
+(509, 'GE8077', 'Total Quality Management', 4, 7, 5, 3),
+(510, 'CE8013', 'Coastal Engineering', 4, 8, 5, 3),
+(511, 'CE8014', 'Participatory Water Resources Management', 4, 8, 5, 3),
+(512, 'CE8015', 'Integrated Water Resources Management', 4, 8, 5, 3),
+(513, 'CE8016', 'Groundwater Engineering', 4, 8, 5, 3),
+(514, 'CE8017', 'Water Resources Systems Engineering', 4, 8, 5, 3),
+(515, 'CE8018', 'Geo-Environmental Engineering', 4, 8, 5, 3),
+(516, 'CE8091', 'Hydrology and Water Resources Engineering', 4, 8, 5, 3),
+(517, 'GE8076', 'Professional Ethics in Engineering', 4, 8, 5, 3),
+(518, 'CE8019', 'Computer Aided Design of Structures', 4, 8, 5, 3),
+(519, 'CE8020', 'Maintenance,Repair and Rehabilitation of Structures ', 4, 8, 5, 3),
+(520, 'CE8021', 'Structural Dynamics and Earthquake Engineering', 4, 8, 5, 3),
+(521, 'CE8022', 'Prefabricated Structures', 4, 8, 5, 3),
+(522, 'CE8023', 'ridge Engineering', 4, 8, 5, 3),
+(523, 'GE8073', 'Fundamentals of Nano Science', 4, 8, 5, 3),
+(524, '', 'Library', 0, 0, 8, 0),
+(525, '', 'Seminar', 0, 0, 8, 0);
 
 -- --------------------------------------------------------
 
@@ -163,21 +663,28 @@ INSERT INTO `timetable_subjects` (`subject_id`, `subject_code`, `subject`, `depa
 --
 
 CREATE TABLE `timetable_subject_allocations` (
-  `subject_allocation_id` int NOT NULL,
-  `timetable_id` int DEFAULT NULL,
-  `subject_id` int DEFAULT NULL,
-  `faculty_id` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `subject_allocation_id` int(11) NOT NULL,
+  `timetable_id` int(11) DEFAULT NULL,
+  `subject_id` int(11) DEFAULT NULL,
+  `faculty_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `timetable_subject_allocations`
 --
 
 INSERT INTO `timetable_subject_allocations` (`subject_allocation_id`, `timetable_id`, `subject_id`, `faculty_id`) VALUES
-(158, 34, 1, 22),
-(159, 34, 2, 25),
-(160, 34, 3, 28),
-(161, 34, 46, 23);
+(330, 76, 117, 42),
+(331, 76, 118, 27),
+(334, 73, 27, 23),
+(335, 73, 28, 31),
+(336, 73, 29, 32),
+(337, 73, 30, 33),
+(338, 73, 31, 22),
+(339, 73, 32, 31),
+(340, 73, 33, 33),
+(341, 73, 26, 30),
+(342, 73, 34, 35);
 
 -- --------------------------------------------------------
 
@@ -186,10 +693,10 @@ INSERT INTO `timetable_subject_allocations` (`subject_allocation_id`, `timetable
 --
 
 CREATE TABLE `timetable_subject_categories` (
-  `category_id` int NOT NULL,
-  `category` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `category_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `category_id` int(11) NOT NULL,
+  `category` varchar(20) NOT NULL,
+  `category_name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `timetable_subject_categories`
@@ -201,7 +708,9 @@ INSERT INTO `timetable_subject_categories` (`category_id`, `category`, `category
 (3, 'ES', 'Engineering Sciences'),
 (4, 'PC', 'Professional Core'),
 (5, 'PE', 'Professional Electives'),
-(6, 'EEC', 'Employability Enhancement Courses');
+(6, 'EEC', 'Employability Enhancement Courses'),
+(7, 'OE', 'Open Elective'),
+(8, 'LS', 'Library/Seminar');
 
 -- --------------------------------------------------------
 
@@ -210,19 +719,26 @@ INSERT INTO `timetable_subject_categories` (`category_id`, `category`, `category
 --
 
 CREATE TABLE `timetable_timetables` (
-  `timetable_id` int NOT NULL,
-  `academic_year_from` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `academic_year_to` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `department_id` int NOT NULL,
-  `semester` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `timetable_id` int(11) NOT NULL,
+  `academic_year_from` varchar(10) DEFAULT NULL,
+  `academic_year_to` varchar(10) DEFAULT NULL,
+  `department_id` int(11) NOT NULL,
+  `semester` int(11) DEFAULT NULL,
+  `regulation` int(11) NOT NULL,
+  `room_no` int(11) NOT NULL,
+  `period` varchar(50) NOT NULL,
+  `with_effect_from` date NOT NULL,
+  `class_advisor` varchar(100) NOT NULL,
+  `class_committee_chairperson` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `timetable_timetables`
 --
 
-INSERT INTO `timetable_timetables` (`timetable_id`, `academic_year_from`, `academic_year_to`, `department_id`, `semester`) VALUES
-(34, '2018', '2022', 1, 1);
+INSERT INTO `timetable_timetables` (`timetable_id`, `academic_year_from`, `academic_year_to`, `department_id`, `semester`, `regulation`, `room_no`, `period`, `with_effect_from`, `class_advisor`, `class_committee_chairperson`) VALUES
+(73, '2021', '2022', 1, 4, 2017, 314, '16-03-2022 to 16-06-2022', '2022-03-16', 'Mrs.T.Kavitha', 'Dr.K.Saravanan'),
+(76, '2015', '2016', 3, 3, 2017, 318, '16-03-2015 to 16-06-2015', '2015-06-01', 'Dr.Usha', 'Dr.Suja');
 
 -- --------------------------------------------------------
 
@@ -231,31 +747,54 @@ INSERT INTO `timetable_timetables` (`timetable_id`, `academic_year_from`, `acade
 --
 
 CREATE TABLE `timetable_time_day` (
-  `time_day_id` int NOT NULL,
-  `timetable_id` int DEFAULT NULL,
-  `day` int DEFAULT NULL,
-  `time` int DEFAULT NULL,
-  `subject_allocation_id` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `time_day_id` int(11) NOT NULL,
+  `timetable_id` int(11) DEFAULT NULL,
+  `day` int(11) DEFAULT NULL,
+  `time` int(11) DEFAULT NULL,
+  `subject_allocation_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `timetable_time_day`
 --
 
 INSERT INTO `timetable_time_day` (`time_day_id`, `timetable_id`, `day`, `time`, `subject_allocation_id`) VALUES
-(66, 34, 1, 1, 158),
-(67, 34, 1, 6, 159),
-(68, 34, 1, 8, 158),
-(69, 34, 2, 2, 159),
-(70, 34, 2, 3, 160),
-(71, 34, 2, 8, 161),
-(72, 34, 3, 1, 159),
-(73, 34, 3, 3, 160),
-(74, 34, 3, 7, 160),
-(75, 34, 4, 4, 161),
-(77, 34, 5, 1, 158),
-(85, 34, 5, 2, 159),
-(86, 34, 5, 3, 158);
+(614, 76, 1, 2, 331),
+(615, 76, 2, 1, 331),
+(616, 76, 2, 5, 330),
+(617, 76, 3, 3, 330),
+(618, 76, 3, 6, 331),
+(619, 76, 4, 2, 330),
+(620, 76, 4, 6, 331),
+(628, 73, 1, 1, 341),
+(629, 73, 1, 2, 335),
+(630, 73, 1, 3, 337),
+(631, 73, 1, 5, 340),
+(632, 73, 1, 6, 340),
+(633, 73, 1, 7, 340),
+(634, 73, 1, 8, 340),
+(635, 73, 2, 1, 337),
+(636, 73, 2, 3, 335),
+(637, 73, 2, 4, 334),
+(638, 73, 2, 5, 341),
+(639, 73, 2, 6, 336),
+(640, 73, 3, 1, 337),
+(641, 73, 3, 4, 336),
+(642, 73, 3, 5, 339),
+(643, 73, 3, 6, 339),
+(644, 73, 3, 7, 339),
+(645, 73, 3, 8, 339),
+(646, 73, 4, 2, 335),
+(647, 73, 4, 3, 338),
+(648, 73, 4, 4, 338),
+(649, 73, 4, 5, 342),
+(650, 73, 4, 6, 342),
+(651, 73, 5, 1, 341),
+(652, 73, 5, 2, 334),
+(653, 73, 5, 3, 336),
+(654, 73, 5, 4, 334),
+(655, 73, 5, 5, 338),
+(656, 73, 5, 6, 341);
 
 --
 -- Indexes for dumped tables
@@ -284,9 +823,7 @@ ALTER TABLE `timetable_faculties`
 -- Indexes for table `timetable_subjects`
 --
 ALTER TABLE `timetable_subjects`
-  ADD PRIMARY KEY (`subject_id`),
-  ADD KEY `dept_id` (`department_id`),
-  ADD KEY `timetable_subjects_ibfk_2` (`category_id`);
+  ADD PRIMARY KEY (`subject_id`);
 
 --
 -- Indexes for table `timetable_subject_allocations`
@@ -326,49 +863,49 @@ ALTER TABLE `timetable_time_day`
 -- AUTO_INCREMENT for table `timetable_admin`
 --
 ALTER TABLE `timetable_admin`
-  MODIFY `admin_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `timetable_departments`
 --
 ALTER TABLE `timetable_departments`
-  MODIFY `department_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `department_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `timetable_faculties`
 --
 ALTER TABLE `timetable_faculties`
-  MODIFY `faculty_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `faculty_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `timetable_subjects`
 --
 ALTER TABLE `timetable_subjects`
-  MODIFY `subject_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `subject_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=526;
 
 --
 -- AUTO_INCREMENT for table `timetable_subject_allocations`
 --
 ALTER TABLE `timetable_subject_allocations`
-  MODIFY `subject_allocation_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=162;
+  MODIFY `subject_allocation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=343;
 
 --
 -- AUTO_INCREMENT for table `timetable_subject_categories`
 --
 ALTER TABLE `timetable_subject_categories`
-  MODIFY `category_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `timetable_timetables`
 --
 ALTER TABLE `timetable_timetables`
-  MODIFY `timetable_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `timetable_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `timetable_time_day`
 --
 ALTER TABLE `timetable_time_day`
-  MODIFY `time_day_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+  MODIFY `time_day_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=657;
 
 --
 -- Constraints for dumped tables
@@ -379,13 +916,6 @@ ALTER TABLE `timetable_time_day`
 --
 ALTER TABLE `timetable_faculties`
   ADD CONSTRAINT `timetable_faculties_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `timetable_departments` (`department_id`) ON UPDATE CASCADE;
-
---
--- Constraints for table `timetable_subjects`
---
-ALTER TABLE `timetable_subjects`
-  ADD CONSTRAINT `timetable_subjects_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `timetable_departments` (`department_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `timetable_subjects_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `timetable_subject_categories` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `timetable_subject_allocations`

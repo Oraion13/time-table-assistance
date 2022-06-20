@@ -47,10 +47,23 @@ function get_local_storage() {
     : [];
 }
 
+// get the time table
+function get_local_edit_tt() {
+  return window.localStorage.getItem("edit_tt_flag")
+    ? window.localStorage.getItem("edit_tt_flag")
+    : 0;
+}
+
 // --------------------------------------- Initial setup ---------------------------------//
 
 // get from local storage
 function setup_items() {
+  // if no edit flag is set, don not store tt
+  if(!get_local_edit_tt()){
+    window.localStorage.removeItem("timetable");
+    return;
+  }
+
   let item = get_local_storage();
 
   if (item.timetable_id) {
@@ -194,6 +207,7 @@ function create_timetable(e) {
         return;
       } else {
         window.localStorage.setItem("timetable", JSON.stringify(got));
+        window.localStorage.removeItem("edit_tt_flag");
         window.location.replace("./subjectallocation.html");
       }
     }
@@ -236,6 +250,7 @@ const edit_timetable = () => {
         return;
       } else {
         window.localStorage.setItem("timetable", JSON.stringify(got));
+        window.localStorage.removeItem("edit_tt_flag");
         window.location.replace("./subjectallocation.html");
       }
     }
@@ -284,6 +299,7 @@ function finish_later_timetable(e) {
       } else {
         if (tt.timetable_id) {
           window.localStorage.removeItem("timetable");
+          window.localStorage.removeItem("edit_tt_flag");
         }
 
         window.location.replace("./homepage.html");

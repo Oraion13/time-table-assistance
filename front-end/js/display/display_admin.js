@@ -175,6 +175,7 @@ function edit_item(e) {
       if (got.error) {
         reject(window.alert(got.error));
       } else {
+        window.localStorage.setItem("edit_tt_flag", 1);
         window.localStorage.setItem("timetable", JSON.stringify(got));
         window.location.replace("./createtimetable.html");
       }
